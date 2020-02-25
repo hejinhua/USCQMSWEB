@@ -1,0 +1,21 @@
+
+.layout {
+  font-family: "Helvetica Neue", Helvetica, Tahoma, Arial, "Microsoft Yahei", "Hiragino Sans GB", "WenQuanYi Micro Hei", Georgia, sans-serif;
+  height: 100vh;
+  width: 100%;
+}
+
+.layout_header {
+  height: 52px;
+  padding: 0;
+  line-height: 52px;
+  background: #FFFFFF;
+}
+.layout_content_div {
+  height: calc( 100vh - 52px);
+  width: calc( 100vw - 220px);
+}
+
+
+
+

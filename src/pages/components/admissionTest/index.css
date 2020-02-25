@@ -1,0 +1,37 @@
+.bigContainer {
+  overflow: auto;
+  height: 100%;
+}
+.container {
+  padding: 15px 10px;
+}
+.container span, .listCon label {
+  color: #00B0F0;
+  margin-left: 10px;
+}
+.formCon {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #DBDBDB;
+}
+.input {
+  border: 1px solid #E6EEF9;
+}
+.btnCon {
+  margin-bottom: 10px;
+  text-align: right;
+}
+.btn {
+  margin-right: 15px;
+}
+.lastBtn {
+  margin-right: 10px;
+}
+.listCon {
+  padding: 0px 10px;
+  background: #fff;
+  margin-bottom: 30px;
+}
+.listTitle {
+  padding-bottom: 10px;
+}
