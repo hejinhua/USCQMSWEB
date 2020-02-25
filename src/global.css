@@ -1,0 +1,348 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.ant-menu-horizontal {
+  background: #3ca0dc;
+  font-weight: bold;
+  line-height: 52px;
+  color: #f2f2f2;
+  border-bottom: none;
+}
+
+.ant-menu-horizontal > .ant-menu-item {
+  border-bottom: none;
+  top: -2px;
+  vertical-align: middle;
+}
+
+.ant-menu-item.ant-menu-item-active:hover {
+  border-bottom: none;
+  color: white;
+  background: #1e8cc8;
+}
+
+.ant-menu-horizontal > .ant-menu-item-selected {
+  background: #1e8cc8;
+  color: white;
+}
+
+.ant-tabs-content.ant-tabs-content-no-animated.ant-tabs-top-content.ant-tabs-card-content {
+  padding: 10px 10px 10px 10px;
+  box-sizing: border-box;
+}
+
+.ant-tabs-bar {
+  margin: 0px;
+  background: white;
+  border-bottom: 1px solid #dcdcdc;
+  box-shadow: 0px 2px 10px #dcdcdc;
+}
+
+.ant-drawer-content {
+  background-color: white;
+}
+
+.ant-drawer-bottom.ant-drawer-open .ant-drawer-content-wrapper {
+  background-color: red;
+  width: 900px;
+}
+
+table {
+  table-layout: fixed; /* 只有定义了表格的布局算法为fixed，下面td、th的定义才能起作用。 */
+}
+
+td,
+th {
+  word-break: keep-all; /* 不换行 */
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden;
+}
+
+/*滚动条样式*/
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(217, 217, 217, 0.2);
+  -webkit-box-shadow: inset 0 0 5px rgba(217, 217, 217, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow: inset 0 0 5px rgba(217, 217, 217, 0.2);
+  -webkit-box-shadow: inset 0 0 5px rgba(217, 217, 217, 0.2);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/*上下布局 子页面样式*/
+.tab_pane {
+  background: white;
+  border: 0px solid #e6e6e6; /*此处设置边框宽度为1px会有影响*/
+  box-sizing: border-box;
+}
+/*表格体数据行样式*/
+.ant-table-tbody > tr > td {
+  padding: 4px !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+/*表格头数据行样式*/
+.ant-table-thead > tr > td {
+  padding: 4px !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+/* 表格头背景颜色 */
+.ant-table-thead > tr {
+  background: #fffff0 !important;
+}
+/*表格头 头样式*/
+.ant-table-thead > tr > th {
+  padding: 8px !important;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+/*子表格表格头 头样式*/
+#childTable .ant-table-wrapper .ant-table-thead > tr > th {
+  padding: 8px 8px !important;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  background-color: white;
+}
+
+.ant-tabs-nav .ant-tabs-tab {
+  padding: 6px 8px;
+}
+.ant-tabs-extra-content {
+  line-height: 30px !important;
+}
+/*弹窗头样式*/
+.ant-modal-header {
+  padding: 8px 24px !important;
+  background-color: #3ca2e0 !important;
+  font-weight: bolder !important;
+}
+/*弹窗头字体*/
+.ant-modal-title {
+  color: white !important;
+}
+/*弹窗关闭X样式*/
+.ant-modal-close-x {
+  width: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+}
+.ant-modal-close-icon {
+  color: white !important;
+}
+
+/*表格行选中样式*/
+.ant-table-tbody > tr.ant-table-row-selected td {
+  background: #baefe1 !important;
+}
+/*input输入框前后间距*/
+.ant-input {
+  padding: 4px 4px;
+}
+/*input后缀图标右间距*/
+.ant-input-affix-wrapper .ant-input-suffix {
+  right: 8px;
+}
+.ant-input-suffix :hover {
+  color: dodgerblue;
+}
+/*拖拽表格*/
+tr.drop-over-downward td {
+  border-bottom: 2px dashed #1890ff;
+}
+tr.drop-over-upward td {
+  border-top: 2px dashed #1890ff;
+}
+.ant-dropdown-menu-item {
+  padding: 3px 12px;
+}
+.react-contextmenu-wrapper {
+  /*行内块，可以设置宽高等*/
+  display: inline-block;
+}
+
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+  padding: 0px 10px;
+}
+
+/*-----------控制可编辑单元格------------*/
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell-value-wrap {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 4px 11px;
+}
+
+/*Card卡片头样式*/
+.ant-card-head-title {
+  padding: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/*控制表格拉伸的样式*/
+.react-resizable {
+  position: relative !important;
+}
+.react-resizable-handle {
+  position: absolute !important;
+  width: 10px !important;
+  height: 100% !important;
+  bottom: 0 !important;
+  right: -5px !important;
+  cursor: col-resize !important;
+}
+
+#home > .ant-layout-header,
+#home > .ant-menu-horizontal {
+  background: #ffffff21;
+  height: 52px;
+  line-height: 53px;
+}
+
+/* rnd */
+.react-draggable {
+  position: static !important;
+}
+
+/* 设置页签宽高 */
+.ant-tabs {
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ant-tabs-content {
+  height: calc(100% - 32px);
+}
+
+/* 解决table边框宽度不够, 去掉antd table 边框，设置底层table边框 */
+.ant-table-small {
+  border: none;
+}
+.ant-table-small.ant-table-bordered .ant-table-content {
+  border: none;
+}
+.ant-table-small table {
+  border: 1px solid #e8e8e8 !important;
+}
+/*输入框文字左对齐*/
+.ant-form-item-label {
+  text-align: left;
+  padding-left: 4px;
+}
+/* 表格内容为空时，表格头过长时显示滚动条 */
+.ant-table-empty .ant-table-body {
+  overflow: auto !important;
+}
+
+/* List组件行高 */
+/*.ant-list-item{*/
+/*height: 25px !important;*/
+/*box-sizing: border-box !important;*/
+/*padding: 0 8px !important;*/
+/*}*/
+
+/* 树超出隐藏 */
+.ant-tree {
+  overflow: hidden;
+}
+
+/* 去掉表格数据为空时的数据为空提示 */
+.ant-table-placeholder {
+  display: none !important;
+}
+
+/* 设置弹窗最大高度， 超出显示滚动条 */
+.ant-modal-body {
+  max-height: calc(100vh - 92px);
+  width: 100% !important;
+  overflow: auto;
+  /* padding-bottom: 0 !important; */
+}
+
+/* 去掉弹窗遮罩层的滚动条 */
+.ant-modal-wrap {
+  overflow: hidden;
+}
+
+/* 去掉弹窗的padding-bottom */
+.ant-modal {
+  padding-bottom: 0 !important;
+}
+
+/* 放大树结构图标 */
+.ant-tree-iconEle {
+  font-size: 18px;
+}
+
+/*按钮的标准样式*/
+.other_btn {
+  margin: 5px 0 5px 5px;
+}
+/*第一个按钮样式*/
+.first_btn {
+  margin: 5px 0 5px 5px;
+}
+.full_screen {
+  width: 100%;
+  height: 100%;
+}
+/* 页签关闭按钮 */
+.tab_bar_icon {
+  margin-right: 10px;
+}
+
+/* spin loading设置为全屏 */
+/* .ant-spin-spinning {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1001;
+  background: rgba(0,0,0,0);
+} */
+
+.ant-menu-vertical.ant-menu-sub {
+  min-width: auto;
+}
+
+.print_table {
+  border: 1px solid #000;
+  text-align: center;
+  font-weight: bold;
+  border-collapse: collapse;
+}
+.print_table td {
+  border: 1px solid #000;
+  word-break: break-all;
+  white-space: normal;
+}

@@ -1,0 +1,50 @@
+.main {
+  width: 100%;
+  height: 100%;
+  background: url("../../../assets/login-bg.jpg") no-repeat ;
+  background-size: 100% 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginCard {
+  width: 962px;
+  height: 466px;
+  background:#fff url("../../../assets/login-card.png") no-repeat 5px ;
+  background-size: 492px auto;
+  display: flex;
+  flex-direction: row-reverse;
+}
+.loginTitle {
+  width: 960px;
+  height: 35px;
+  color: #fff;
+  font-size: 30px;
+  text-align: center;
+  margin-top: 15px;
+}
+.loginSubtitle {
+  width: 960px;
+  height: 35px;
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
+  margin: 15px 0 25px 0;
+}
+
+.loginForm {
+  width: 33%;
+  margin-right: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+
+
+
+

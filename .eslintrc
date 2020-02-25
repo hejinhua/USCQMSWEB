@@ -1,0 +1,19 @@
+{
+  "extends": ["eslint-config-umi", "prettier"],
+  "parser": "babel-eslint",
+  "rules": {
+    "react/prop-types": 0,
+    "space-before-function-paren": 0,
+    "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
+    "prettier/prettier": [2, {
+      "endOfLine":"auto"
+    }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn" 
+  },
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "plugins": ["prettier", "react-hooks"]
+}

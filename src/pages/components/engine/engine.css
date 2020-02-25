@@ -1,0 +1,77 @@
+.flexY {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* overflow: auto; */
+}
+.flexX {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+.flexGrowY {
+  flex-grow: 1;
+  height: 5px;
+  width: 100%;
+}
+.flexGrowX {
+  flex-grow: 1;
+  width: 5px;
+  height: 100%;
+}
+.authScroll {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  position: relative;
+  /* transform: scale3d(1, 1, 1); */
+}
+.authBtn {
+  width: calc(30%);
+  height: 45px;
+  position: fixed;
+  display: flex;
+  z-index: 1;
+  right: 20px;
+  margin-top: 5px;
+}
+.flexWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  font-weight: bold;
+}
+.search {
+  flex-grow: 1;
+  margin: 5px 0 5px 5px;
+}
+.flexNoHigh {
+  display: flex;
+}
+.relationPage {
+  width: 100%;
+  height: 400px;
+}
+.marginLeft {
+  margin-left: 5px;
+}
+
+/* PrintHoc start */
+.print_header {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+.print_table {
+  width: 100%;
+  height: 500px;
+  border: 1px solid #000;
+  /* border-collapse:collapse; */
+}
+
+/* PrintHoc end */
