@@ -64,7 +64,7 @@ const ProcessActinst = ({ dispatch, processActinst }) => {
     //弹窗标题
     const title = '办理建议'
     //后端请求路径
-    const url = `/task/handle/${taskId}`
+    const url = `/act/task/handle/${taskId}`
     //前端刷新页面请求
     const refreshUrl = 'actTaskToDo/query'
     dispatch({
@@ -77,7 +77,7 @@ const ProcessActinst = ({ dispatch, processActinst }) => {
     //弹窗标题
     const title = '驳回原因'
     //后端请求路径
-    const url = `/task/reject/${taskId}`
+    const url = `/act/task/reject/${taskId}`
     //前端刷新页面请求
     const refreshUrl = 'actTaskToDo/query'
     dispatch({

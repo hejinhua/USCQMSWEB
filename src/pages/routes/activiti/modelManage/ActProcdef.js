@@ -59,7 +59,7 @@ const ActProcdef = ({ dispatch, actProcdef }) => {
                 size='small'
                 type='primary'
                 icon='pushpin'
-                onClick={() => showConfirm(() => activation(record.id), '确定要激活吗?')}
+                onClick={() => showConfirm(() => activation(record.ID), '确定要激活吗?')}
               >
                 激活
               </Button>
@@ -69,7 +69,7 @@ const ActProcdef = ({ dispatch, actProcdef }) => {
                 size='small'
                 type='primary'
                 icon='pushpin'
-                onClick={() => showConfirm(() => suspension(record.id), '确定要挂起吗?')}
+                onClick={() => showConfirm(() => suspension(record.ID), '确定要挂起吗?')}
               >
                 挂起
               </Button>
@@ -79,7 +79,7 @@ const ActProcdef = ({ dispatch, actProcdef }) => {
               type='danger'
               icon='delete'
               size='small'
-              onClick={() => showConfirm(() => del(record.deploymentId), '正在进行的流程也会删除,确定删除吗?')}
+              onClick={() => showConfirm(() => del(record.DEPLOYMENTID), '正在进行的流程也会删除,确定删除吗?')}
             >
               删除
             </Button>
@@ -91,7 +91,7 @@ const ActProcdef = ({ dispatch, actProcdef }) => {
 
   list = generatorTableKey(list)
   list.map(item => {
-    item.deployTime = dateToFormat(item.deployTime)
+    item.DEPLOYTIME = dateToFormat(item.DEPLOYTIME)
   })
   //挂起流程
   const suspension = id => {
