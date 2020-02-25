@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>群组管理</title>
+  <link rel="stylesheet" href="/dist/css/layui.css">
+  <link rel="stylesheet" href="/dist/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="/dist/css/manager.css">
+  <script src="/dist/layui.js"></script>
+  <script src="/dist/bootstrap/jquery-3.3.1.min.js"></script>
+  <script src="/dist/bootstrap/js/bootstrap.js"></script>
+  <script type="text/javascript">
+    //添加群组
+    function addGroup() {
+      layui.use('layer', function(layer) {
+        layer.open({
+          type: 1,
+          title: '添加群组',
+          content: $('#add-main'),
+          area: ['520px', '465px'],
+          success: function(layero, index) {
+          },
+          end: function() {
+            window.location.reload()
+          }
+        })
+      })
+    }
+
+    //群组头像上传
+    layui.use('upload', function() {
+      let $ = layui.jquery
+        , upload = layui.upload
+      //普通图片上传
+      let uploadInst = upload.render({
+        elem: '#uoload'
+        , url: `/api/src/chatGroup/uploadAvatar`
+        , auto: false
+        , accept: 'file'
+        , size: 500
+        , exts: 'png|jpg|gif'
+        , bindAction: '#save'
+        , choose: function(obj) {
+          //预读本地文件示例，不支持ie8
+          obj.preview(function(index, file, result) {
+            $('#img').attr('src', result) //图片链接（base64）
+            $('#photoName').val(file.name)
+          })
+        }
+        , done: function(res) {
+          //如果上传失败
+          if (res.code > 0) {
+            return layer.msg('上传失败')
+          }
+          //上传成功
+        }
+        // , error: function () {
+        //   //演示失败状态，并实现重传
+        //   let demoText = $('#demoText');
+        //   demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+        //   demoText.find('.demo-reload').on('click', function () {
+        //     uploadInst.upload();
+        //   });
+        // }
+      })
+    })
+    //群组表单和创建群组
+    $(function() {
+      let userId = localStorage.getItem('userId')
+      $('#userId').val(userId)
+      layui.use('form', function() {
+        let form = layui.form
+          , layer = layui.layer
+          , $ = layui.jquery
+        form.on('submit(save)', function(data) {
+          const initFormData = {}
+          const values = {
+            implclass: 'com.usc.app.ims.config.action.group.CreateGroup',
+            itemNo: 'CHAT_GROUP',
+            userName: localStorage.getItem('userName'),
+            otherParam: data.field
+          }
+          initFormData.values = JSON.stringify(values)
+          $.ajax({
+            type: 'POST',
+            url: `/api/dcm/access`,
+            async: false,
+            headers: { clientID: sessionStorage.getItem('clientID') },
+            dataType: 'json',
+            data: initFormData, //往后台发送的是data.field，即一个{name：value}的数据结构
+            success: function(res) {
+              if (res.code === 0) {
+                layer.msg(res.msg, { icon: 1, time: 2000 })
+                //创群后返回群id把自己加入群中
+                // $.ajax({
+                //   type: 'POST',
+                //   url: api + '/chatGroup/saveGroupUser?groupId=' + res.groupId + '&userId=' + res.userId,
+                //   dataType: 'json',
+                //   data: ''
+                // })
+              } else {
+                layer.msg(res.msg, { icon: 5, time: 2000 })
+              }
+            }
+          })
+          return false
+        })
+      })
+      refreshGroups()
+    })
+
+    //修改群组
+    function editGroup(id) {
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.GetGroupInfo',
+        itemNo: 'CHAT_GROUP',
+        userName: localStorage.getItem('userName'),
+        otherParam: { groupId: id }
+      }
+      initFormData.values = JSON.stringify(values)
+      $.ajax({
+        type: 'POST',
+        url: `/api/dcm/access`,
+        headers: { clientID: sessionStorage.getItem('clientID') },
+        dataType: 'json',
+        data: initFormData,
+        success: function(res) {
+          $('#eid').val(res.id)
+          $('#euserId').val(res.createBy)
+          $('#ephotoName').val(res.photo)
+          $('#egroupName').val(res.groupName)
+          $('#eremarks').val(res.remarks)
+        }
+      })
+      layui.use('layer', function(layer) {
+        layer.open({
+          type: 1,
+          title: '修改群组',
+          content: $('#edit-main'),
+          area: ['520px', '465px'],
+          end: function() {
+            window.location.reload()
+          }
+        })
+      })
+    }
+
+    //修改群组头像
+    layui.use('upload', function() {
+      let $ = layui.jquery
+        , upload = layui.upload
+      //普通图片上传
+      let uploadInst = upload.render({
+        elem: '#euoload'
+        , url: `/api/src/chatGroup/uploadAvatar`
+        , auto: false
+        , accept: 'file'
+        , size: 500
+        , exts: 'png|jpg|gif'
+        , bindAction: '#edit'
+        , choose: function(obj) {
+          //预读本地文件示例，不支持ie8
+          obj.preview(function(index, file, result) {
+            $('#eimg').attr('src', result) //图片链接（base64）
+            $('#ephotoName').val(file.name)
+          })
+        }
+        , done: function(res) {
+          //如果上传失败
+          if (res.code > 0) {
+            return layer.msg('上传失败')
+          }
+          //上传成功
+        }
+      })
+    })
+    //修改群组
+    $(function() {
+      layui.use('form', function() {
+        let form = layui.form
+          , layer = layui.layer
+          , $ = layui.jquery
+        form.on('submit(edit)', function(data) {
+          const initFormData = {}
+          const values = {
+            implclass: 'com.usc.app.ims.config.action.group.EditGroup',
+            itemNo: 'CHAT_GROUP',
+            userName: localStorage.getItem('userName'),
+            otherParam: data.field
+          }
+          initFormData.values = JSON.stringify(values)
+          $.ajax({
+            type: 'POST',
+            url: `/api/dcm/access`,
+            headers: { clientID: sessionStorage.getItem('clientID') },
+            dataType: 'json',
+            data: initFormData, //往后台发送的是data.field，即一个{name：value}的数据结构
+            success: function(res) {
+              layer.msg('修改成功！', { icon: 1, time: 2000 })
+              refreshGroups()
+            },
+            error: function(res) {
+              layer.msg('修改失败！', { icon: 5, time: 2000 })
+            }
+          })
+          return false
+        })
+      })
+    })
+
+    //删除群组
+    function delGroup(id) {
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.DeleteGroup',
+        itemNo: 'CHAT_GROUP',
+        userName: localStorage.getItem('userName'),
+        otherParam: { groupId: id }
+      }
+      initFormData.values = JSON.stringify(values)
+      let layer = layui.layer
+      $.ajax({
+        type: 'post',
+        url: `/api/dcm/access`,
+        headers: { clientID: sessionStorage.getItem('clientID') },
+        dataType: 'json',
+        data: initFormData, //往后台发送的是data.field，即一个{name：value}的数据结构
+        success: function(res) {
+          if (res.flag) {
+            layer.msg('删除成功！', { icon: 1, time: 2000 })
+            refreshGroups()
+          } else {
+            layer.msg('删除失败！', { icon: 2, time: 2000 })
+          }
+        },
+        error: function(res) {
+          layer.msg('删除失败！', { icon: 2, time: 2000 })
+        }
+      })
+    }
+
+    //群主查看群成员和删除
+    function editGroupMember(id) {
+      localStorage.setItem('groupId', id)
+      layui.use('layer', function(layer) {
+        layer.open({
+          type: 1,
+          title: '成员管理',
+          content: $('#edit-groups'),
+          area: ['520px', '465px'],
+          end: function() {
+            window.location.reload()
+          }
+        })
+      })
+      refreshMembers(id)
+    }
+
+    //获取群组成员列表
+    function refreshMembers(id) {
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.GetGroupUsers',
+        itemNo: 'SUSER',
+        userName: localStorage.getItem('userName'),
+        otherParam: { groupId: id }
+      }
+      initFormData.values = JSON.stringify(values)
+      layui.use('laytpl', function(laytpl) {
+        $.ajax({
+          type: 'POST',
+          url: `/api/dcm/access`,
+          dataType: 'json',
+          headers: { clientID: sessionStorage.getItem('clientID') },
+          data: initFormData,
+          success: function(data) {
+            if (data && data.data.length > 0) {
+              let memberTpl = $('#memberTpl').html() //读取模版
+              laytpl(memberTpl).render(data.data, function(render) {
+                $('#group-editMembers-view').html(render)
+              })
+            } else {
+              let layer = layui.layer
+              layer.msg('该群还没有群成员！', { icon: 5, time: 2000 })
+            }
+          }
+        })
+        return false
+      })
+    }
+
+    //添加群成员
+    function addMemberToGroup() {
+      layui.use('layer', function(layer) {
+        layer.open({
+          type: 1,
+          title: '用户列表',
+          content: $('#userList'),
+          area: ['520px', '465px'],
+          success: function() {
+            layui.use(['table', 'form'], function() {
+              const initFormData = {}
+              const values = {
+                implclass: 'com.usc.app.ims.config.action.group.GetAllUser',
+                itemNo: 'SUSER',
+                userName: localStorage.getItem('userName')
+              }
+              initFormData.values = JSON.stringify(values)
+              var table = layui.table
+                , form = layui.form
+              //第一个实例
+              table.render({
+                elem: '#table'
+                , id: 'tableId'
+                , even: true
+                , height: 300
+                , method: 'POST'
+                , url: `/api/dcm/access` //数据接口
+                , headers: { clientID: sessionStorage.getItem('clientID') }
+                , data: initFormData
+                , parseData: function(res) {
+                  return {
+                    'code': res.code, //解析接口状态
+                    'msg': res.msg, //解析提示文本
+                    'count': res.list.size, //解析数据长度
+                    'data': res.list //解析数据列表
+                  }
+                }
+                , cols: [[ //表头
+                  { type: 'checkbox', fixed: true }
+                  , { field: 'id', title: 'ID', sort: true }
+                  , { field: 'name', title: '用户名', width: 150, sort: true }
+                  , { field: 'sign', title: '签名', width: 80, sort: true }
+                  , { field: 'remark', title: '备注', width: 220, sort: true }
+                ]]
+                , done: function() {
+                  // 隐藏列
+                  $('.layui-table-box').find('[data-field=\'id\']').css('display', 'none')
+                }
+              })
+              //监听表格复选框选择
+              table.on('checkbox(table)', function(obj) {
+
+              })
+              let $ = layui.$, active = {
+                //获取复选框的数据
+                getCheckData: function() { //获取选中数据
+                  var checkStatus = table.checkStatus('tableId')
+                    , data = checkStatus.data
+                  let groupId = localStorage.getItem('groupId')
+                  const initFormData = {}
+                  const values = {
+                    implclass: 'com.usc.app.ims.config.action.group.AddGroupUser',
+                    itemNo: 'CHAT_GROUP_USER',
+                    userName: localStorage.getItem('userName'),
+                    otherParam: { groupId: groupId, data: data }
+                  }
+                  initFormData.values = JSON.stringify(values)
+                  $.ajax({
+                    type: 'POST',
+                    headers: { clientID: sessionStorage.getItem('clientID') },
+                    url: `/api/dcm/access`,
+                    dataType: 'json',
+                    data: initFormData, //往后台发送的是data.field，即一个{name：value}的数据结构
+                    success: function(res) {
+                      if (res.flag) {
+                        layer.msg('添加成功！', { icon: 1, time: 2000 })
+                        refreshMembers(groupId)
+                      } else {
+                        layer.msg('添加失败！', { icon: 5, time: 2000 })
+                      }
+                    },
+                    error: function(res) {
+                      layer.msg('添加失败！', { icon: 5, time: 2000 })
+                    }
+                  })
+                },
+                //搜索
+                reload: function() {
+                  let toolReload = $('#toolReload').val()
+                  //执行重载
+                  if (toolReload) {
+                    const initFormData = {}
+                    const values = {
+                      implclass: 'com.usc.app.ims.config.action.group.SearchByUserName',
+                      itemNo: 'SUSER',
+                      userName: localStorage.getItem('userName'),
+                      otherParam: { name: toolReload }
+                    }
+                    initFormData.values = JSON.stringify(values)
+                    var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 })
+                    setTimeout(function() {
+                      table.reload('tableId', { //表格的id
+                        method: 'POST',
+                        url: `/api/dcm/access`,
+                        headers: { clientID: sessionStorage.getItem('clientID') },
+                        data: initFormData
+                        // where: {
+                        //   'name': toolReload
+                        // }
+                      })
+                      layer.close(index)
+                    }, 800)
+                  } else {
+                    layer.msg('请输入姓名', { icon: 3, time: 2000 })
+                  }
+                }
+              }
+              $('.toolTable .layui-btn').on('click', function() {
+                var type = $(this).data('type')
+                active[type] ? active[type].call(this) : ''
+              })
+            })
+          }
+        })
+      })
+    }
+
+    //删除群成员
+    function delGroupUser(id) {
+      let groupId = localStorage.getItem('groupId')
+      let layer = layui.layer
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.DeleteGroupUser',
+        itemNo: 'CHAT_GROUP_USER',
+        userName: localStorage.getItem('userName'),
+        otherParam: { id: id }
+      }
+      initFormData.values = JSON.stringify(values)
+      $.ajax({
+        type: 'post',
+        url: `/api/dcm/access`,
+        headers: { clientID: sessionStorage.getItem('clientID') },
+        data: initFormData,
+        success: function(res) {
+          if (res.flag) {
+            layer.msg('删除群成员成功！', { icon: 1, time: 2000 })
+            refreshMembers(groupId)
+          } else {
+            layer.msg('删除群成员失败！', { icon: 2, time: 2000 })
+            refreshMembers(groupId)
+          }
+        },
+        error: function(res) {
+          layer.msg('删除群成员失败！', { icon: 2, time: 2000 })
+        }
+      })
+    }
+
+    //获取群组列表
+    function refreshGroups() {
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.GetGroups',
+        itemNo: 'CHAT_GROUP',
+        userName: localStorage.getItem('userName'),
+        otherParam: { userId: localStorage.getItem('userId') }
+      }
+      initFormData.values = JSON.stringify(values)
+      layui.use('laytpl', function(laytpl) {
+        $.ajax({
+          type: 'post',
+          url: `/api/dcm/access`,
+          dataType: 'json',
+          headers: { clientID: sessionStorage.getItem('clientID') },
+          data: initFormData,
+          success: function(data) {
+            if (data && data.list.length > 0) {
+              let groupTpl = $('#groupTpl').html() //读取模版
+              laytpl(groupTpl).render(data.list, function(render) {
+                $('#my-groups-view').html(render)
+              })
+            } else {
+              let layer = layui.layer
+              layer.msg('您还没有群组！', { icon: 5, time: 2000 })
+            }
+          }
+        })
+        return false
+      })
+    }
+
+    //成员查看群成员
+    function viewGroupMember(id) {
+      localStorage.setItem('groupId', id)
+      layui.use('layer', function(layer) {
+        layer.open({
+          type: 1,
+          title: '成员管理',
+          content: $('#view-groups'),
+          area: ['520px', '465px'],
+          end: function() {
+            window.location.reload()
+          }
+        })
+      })
+      refreshviewMembers(id)
+    }
+
+    //非群主获取群组成员列表
+    function refreshviewMembers(id) {
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.GetGroupUsers',
+        itemNo: 'SUSER',
+        userName: localStorage.getItem('userName'),
+        otherParam: { groupId: id }
+      }
+      initFormData.values = JSON.stringify(values)
+      layui.use('laytpl', function(laytpl) {
+        $.ajax({
+          type: 'POST',
+          url: `/api/dcm/access`,
+          dataType: 'json',
+          headers: { clientID: sessionStorage.getItem('clientID') },
+          data: initFormData,
+          success: function(res) {
+            if (res && res.data.length > 0) {
+              let viewMemberTpl = $('#viewMemberTpl').html() //读取模版
+              laytpl(viewMemberTpl).render(res.data, function(render) {
+                $('#group-viewMembers-view').html(render)
+              })
+            } else {
+              let layer = layui.layer
+              layer.msg('该群还没有群成员！', { icon: 5, time: 2000 })
+            }
+          }
+        })
+        return false
+      })
+    }
+
+    //成员退出群组
+    function outGroup(id) {
+      let layer = layui.layer
+      const initFormData = {}
+      const values = {
+        implclass: 'com.usc.app.ims.config.action.group.OutGroup',
+        itemNo: 'CHAT_GROUP_USER',
+        userName: localStorage.getItem('userName'),
+        otherParam: { groupId: id, userId: localStorage.getItem('userId') }
+      }
+      initFormData.values = JSON.stringify(values)
+      $.ajax({
+        type: 'post',
+        url: `/api/dcm/access`,
+        headers: { clientID: sessionStorage.getItem('clientID') },
+        data: initFormData,
+        success: function(res) {
+          if (res.flag) {
+            layer.msg('退群成功！', { icon: 1, time: 2000 })
+            refreshGroups()
+          } else {
+            layer.msg('退群失败！', { icon: 2, time: 2000 })
+          }
+
+        },
+        error: function(res) {
+          layer.msg('退群失败！', { icon: 2, time: 2000 })
+        }
+      })
+    }
+  </script>
+</head>
+<body>
+<!--添加群组的添加框-->
+<div style="margin: 15px;">
+  <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="config-card add hand">
+          <a style="text-decoration: none" href="#" onclick="addGroup()">
+            <span>+</span></a>
+        </div>
+      </div>
+      <div id="my-groups-view"></div>
+    </div>
+  </div>
+</div>
+<!--添加群主信息的表单模板-->
+<div id="add-main" style="display: none;">
+  <div class="center" style="padding: 20px 20px 0px 20px;">
+    <div class="layui-upload" style="padding:0px 20px 0px 190px">
+      <button type="button" class="layui-btn" id="uoload">上传头像</button>
+      <div class="layui-upload-list">
+        <img class="layui-upload-img" id="img">
+      </div>
+    </div>
+  </div>
+  <form class="layui-form" id="add-form">
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;display: none">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">用户ID</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="userId" type="text" name="userId" required lay-verify="required" autocomplete="off"
+               class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">头像名字</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="photoName" type="text" name="photo" required lay-verify="required" autocomplete="off"
+               class="layui-input" readonly="readonly">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">群组名称</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="groupName" type="text" name="groupName" required lay-verify="required" placeholder="请输入群组名称"
+               autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">群组简介</label>
+      </div>
+      <div class="layui-col-md7">
+        <textarea id="remarks" name="remarks" placeholder="请输入内容" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 230px;margin-bottom: 12px">
+      <button class="layui-btn" lay-submit lay-filter="save" id="save">保存</button>
+      <!--<button type="reset" class="layui-btn layui-btn-primary" id="closeBtn" >重置</button>-->
+    </div>
+  </form>
+</div>
+<!--修改群组信息的表单模板-->
+<div id="edit-main" style="display: none;">
+  <div class="center" style="padding: 20px 20px 0px 20px;">
+    <div class="layui-upload" style="padding:0px 20px 0px 190px">
+      <button type="button" class="layui-btn" id="euoload">上传头像</button>
+      <div class="layui-upload-list">
+        <img class="layui-upload-img" id="eimg">
+      </div>
+    </div>
+  </div>
+  <form class="layui-form" id="edit-form">
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;display: none ">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">Id</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="eid" type="text" name="id" required lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;display: none;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">用户ID</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="euserId" type="text" name="userId" required lay-verify="required" autocomplete="off"
+               class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">头像名字</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="ephotoName" type="text" name="photo" required lay-verify="required" autocomplete="off"
+               class="layui-input" readonly="readonly">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;margin-bottom: 0px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">群组名称</label>
+      </div>
+      <div class="layui-col-md7">
+        <input id="egroupName" type="text" name="groupName" required lay-verify="required" placeholder="请输入群组名称"
+               autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 20px;">
+      <div class="layui-col-md3">
+        <label class="layui-form-label" style="width: 100px">群组简介</label>
+      </div>
+      <div class="layui-col-md7">
+        <textarea id="eremarks" name="remarks" placeholder="请输入内容" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item" style="padding:0px 20px 0px 230px;margin-bottom: 12px">
+      <button class="layui-btn" lay-submit lay-filter="edit" id="edit">修改</button>
+      <!--<button type="reset" class="layui-btn layui-btn-primary" id="closeBtn" >重置</button>-->
+    </div>
+  </form>
+</div>
+
+<div id="edit-groups" style="display: none;">
+  <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+      <div class="col-xs-2">
+        <div class="contact-box">
+          <a href="#" onclick="addMemberToGroup()">
+            <div class="text-center">
+              <img alt="image" class="img-circle m-t-xs img-responsive"
+                   src="/dist/css/modules/layim/html/img/add_user.jpg">
+            </div>
+          </a>
+        </div>
+      </div>
+      <div id="group-editMembers-view"></div>
+    </div>
+  </div>
+</div>
+
+<div id="view-groups" style="display: none;">
+  <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+      <div id="group-viewMembers-view"></div>
+    </div>
+  </div>
+</div>
+<!--群成员搜索添加页面-->
+<div id="userList" style="display: none;">
+  <div class="toolTable" style="margin: 10px 10px 10px 96px">
+    搜索用户：
+    <div class="layui-inline">
+      <input class="layui-input" name="name" id="toolReload" autocomplete="off">
+    </div>
+    <button class="layui-btn" data-type="reload">搜索</button>
+  </div>
+  <table id="table" class="layui-hide" lay-filter="table"></table>
+  <div class="toolTable">
+    <button style="float: right;margin-right: 60px" class="layui-btn" data-type="getCheckData">添加</button>
+  </div>
+</div>
+
+<!--群选项卡展示模板-->
+<script id="groupTpl" type="text/html">
+  {{# for(var i = 0, len = d.length; i < len; i++){ }}
+  <div class="col-xs-4">
+    <div class='config-card'>
+      <div class="head bg-primary">
+        <span class='title ml-4'>{{ d[i].groupName }}</span>
+        <div class='circle bg-primary'></div>
+        <div class="line bg-primary"></div>
+        <div class='priority low bg-primary'>
+          <img alt="image" class="img-circle m-t-xs img-responsive"
+               src="{{d[i].avatar}}"/>
+        </div>
+      </div>
+      <div class='content mx-2' style="padding: 10px;">
+        <div class="card" style="width: 20rem;">
+          <img class="card-img-top" src="{{ d[i].photo }}"
+               style="width: 35px;height: auto;">
+          <h9>{{d[i].createByUser}}(群主)</h9>
+          <hr>
+          <div class="card-block">
+            <p class="card-text">{{ d[i].remarks }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="mask">
+        <div class="opts">
+          {{# if(d[i].createByUser == `${localStorage.getItem("userName")}`){ }}
+          <button type="button" onclick="editGroup('{{ d[i].id }}')" class="opt-btn btn btn-primary btn-sm">
+            <span class='icon-edit mr-2'></span>编辑
+          </button>
+          <button type="button" onclick="delGroup('{{ d[i].id }}')" class="opt-btn btn btn-primary btn-sm">
+            <span class='icon-trash mr-2'></span>删除
+          </button>
+          <button type="button" onclick="editGroupMember('{{ d[i].id }}')" class="opt-btn btn btn-primary btn-sm">
+            <span class='icon-trash mr-2'></span>群员
+          </button>
+          {{# }else{ }}
+          <button type="button" onclick="outGroup('{{ d[i].id }}')" class="opt-btn btn btn-primary btn-sm">
+            <span class='icon-trash mr-2'></span>退出
+          </button>
+          <button type="button" onclick="viewGroupMember('{{ d[i].id }}')" class="opt-btn btn btn-primary btn-sm">
+            <span class='icon-trash mr-2'></span>群员
+          </button>
+          {{# } }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{# } }}
+</script>
+<!--获取群成员列表，群主可删除-->
+<script id="memberTpl" type="text/html">
+  {{# for(var i = 0, len = d.length; i < len; i++){ }}
+  <div class="col-xs-2">
+    <div class="contact-box">
+      <a href="#">
+        <div class="text-center photo">
+          <img alt="image" class="img-circle m-t-xs img-responsive"
+               src="{{d[i].avatar}}"/>
+          <h5>{{ d[i].name }}</h5>
+          <div class="mask ">
+            <div class="opts">
+              <button class='btn btn-primary btn-sm hand' onclick="delGroupUser('{{ d[i].id }}')">
+                <span class='icon icon-file-alt mr-3'></span>删除
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </a>
+    </div>
+  </div>
+  {{# } }}
+</script>
+<!--获取群成员列表，非群主不可删除-->
+<script id="viewMemberTpl" type="text/html">
+  {{# for(var i = 0, len = d.length; i < len; i++){ }}
+  <div class="col-xs-2">
+    <div class="contact-box">
+      <a href="#">
+        <div class="text-center photo">
+          <img alt="image" class="img-circle m-t-xs img-responsive"
+               src="{{d[i].avatar}}"/>
+          <h5>{{ d[i].name }}</h5>
+        </div>
+      </a>
+    </div>
+  </div>
+  {{# } }}
+</script>
+
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

@@ -35,7 +35,7 @@ class ProcessActinstCmp extends Component {
     const columns = [
       {
         title: '名称',
-        dataIndex: 'name'
+        dataIndex: 'NAME'
       }
     ]
     const namespace = 'activiti'
@@ -141,7 +141,7 @@ class ProcessActinstCmp extends Component {
               onChange: selectChange,
               selectedRowKeys: selectedRowKey,
               getCheckboxProps: record => ({
-                disabled: !record.hasOwnProperty('password'),
+                disabled: !record.hasOwnProperty('PASSWORD'),
                 name: record.name
               })
             }}

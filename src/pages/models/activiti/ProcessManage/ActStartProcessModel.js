@@ -64,22 +64,22 @@ export default {
       },
       { call, put }
     ) {
-      // const queryParam = {}
-      // queryParam.id = id
-      // queryParam.userName = localStorage.getItem('userName')
-      // queryParam.itemNo = selectedRows[0].USC_OBJECT
-      // queryParam.selectedRows = selectedRows
-      // //清空选中的数据
-      // yield put({
-      //   type: 'actTest/cleanSelectChange'
-      // })
-      // let { data } = yield call(commonService.post, '/act/process/startProcess', queryParam)
-      const values = {
-        itemNo: 'DATAPACK',
-        implclass: 'com.usc.app.activiti.action.StartProcessAction',
-        otherParam: { processId: id, dataPack: selectedRows[0] }
-      }
-      let { data } = yield call(commonService.common, values)
+      const queryParam = {}
+      queryParam.id = id
+      queryParam.userName = localStorage.getItem('userName')
+      queryParam.itemNo = selectedRows[0].USC_OBJECT
+      queryParam.selectedRows = selectedRows
+      //清空选中的数据
+      yield put({
+        type: 'actTest/cleanSelectChange'
+      })
+      let { data } = yield call(commonService.post, '/act/process/startProcess', queryParam)
+      // const values = {
+      //   itemNo: 'DATAPACK',
+      //   implclass: 'com.usc.app.activiti.action.StartProcessAction',
+      //   otherParam: { processId: id, dataPack: selectedRows[0] }
+      // }
+      // let { data } = yield call(commonService.common, values)
       if (data.result) {
         message.success('启动成功！')
         yield put({
