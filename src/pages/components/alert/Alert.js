@@ -141,7 +141,7 @@ class Alert extends Component {
         <Badge count={list.length}>
           <Icon type='alert' style={{ fontSize: '24px' }} onClick={this.toogleModal} />
         </Badge>
-        <Modal visible={visible} title='在线人员明细' onCancel={this.toogleModal} width='80%' onOk={this.toogleModal}>
+        <Modal visible={visible} title='预警明细' onCancel={this.toogleModal} width='80%' onOk={this.toogleModal}>
           <ScrollTable height={200} list={list} columns={columns} onDoubleClick={this.onDoubleClick} />
         </Modal>
         <Modal title='详细信息' width={700} visible={visible2} onOk={this.toogleModal2} onCancel={this.toogleModal2}>
