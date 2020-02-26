@@ -4,6 +4,7 @@ import { Dropdown, Avatar, Divider, Button, Menu, Modal, Layout } from 'antd'
 import Notice from '../../routes/notice/Notice'
 import { connect } from 'dva'
 import OnlineUser from '../user/OnlineUser'
+import Alert from '../alert/Alert'
 import PassWordForm from '../user/PassWordForm'
 import UserInfoForm from '../user/UserInfoForm'
 import logo from '../../../assets/infinity-logo.png'
@@ -42,9 +43,9 @@ const HeaderCmp = ({ dispatch, user, theme }) => {
     }
   }
 
-  const synchro = () => {
-    dispatch({ type: 'user/synchro' })
-  }
+  // const synchro = () => {
+  //   dispatch({ type: 'user/synchro' })
+  // }
 
   const clickModel = () => {
     dispatch({
@@ -96,6 +97,8 @@ const HeaderCmp = ({ dispatch, user, theme }) => {
             {DividerCmp}
           </span>
         )}
+        <Alert />
+        {DividerCmp}
         <OnlineUser />
         {DividerCmp}
         <Notice theme={theme} />
