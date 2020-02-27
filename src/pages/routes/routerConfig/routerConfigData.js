@@ -134,6 +134,30 @@ const routerConfigData = [
     menuName: '待办任务',
     icon: 'fund',
     component: require('../../routes/demo/Demo').default
+  },
+  {
+    namespace: 'SupplierRate',
+    menuName: '供应商交货合格率',
+    icon: 'fund',
+    component: require('../../routes/dataStats/SupplierRate').default
+  },
+  {
+    namespace: 'IQCBad',
+    menuName: 'IQC不良分布',
+    icon: 'fund',
+    component: require('../../routes/dataStats/IQCBad').default
+  },
+  {
+    namespace: 'IQCReport',
+    menuName: 'IQC检验报表',
+    icon: 'fund',
+    component: require('../../routes/dataStats/IQCReport').default
+  },
+  {
+    namespace: 'IncomingBad',
+    menuName: 'IQC检验报表',
+    icon: 'fund',
+    component: require('../../routes/dataStats/IncomingBad').default
   }
 ]
 export default routerConfigData
