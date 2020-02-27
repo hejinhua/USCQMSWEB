@@ -58,7 +58,26 @@ export default {
         item.namespace = newNamespace
         item.pRecord = record
         const panes = yield select(state => state[pNameSpace].panes)
-        if (panes.length < itemRelationPage.length) {
+        if (rType === 'dynamicRelationPage') {
+          judgeModel(newNamespace)
+          let pl = {
+            itemNo,
+            itemA,
+            itemAData: record,
+            implclass: 'com.usc.app.action.demo.zc.GainDynamicRelationPageModelAndDataAction'
+          }
+          let { data } = yield call(commonService.common, pl)
+          item.modelRelationShip = data
+          yield put({
+            type: `${newNamespace}/packet`, //调用各个组件model的同步packet方法
+            payload: { dataList: data.dataList, pRecord: record }
+          })
+          let Cmp = SubPageEngine(item)
+          const index = panes.findIndex(pane => pane.key === id)
+          const pane = { title: name, icon, content: <Cmp />, key: id }
+          index === -1 ? panes.push(pane) : (panes[index] = pane)
+          yield put({ type: `${pNameSpace}/packet`, payload: { panes } })
+        } else if (panes.length < itemRelationPage.length) {
           judgeModel(newNamespace)
           // 2. 生成组件
           if (rType === 'relationclassview') {
@@ -66,20 +85,6 @@ export default {
             yield put({
               type: 'common/queryClassViewNode',
               payload: { pNameSpace, item, record, facetype, namespace: newNamespace }
-            })
-          } else if (rType === 'dynamicRelationPage') {
-            // 动态关联页要单独请求建模(建模数据一起返回)
-            let pl = {
-              itemNo,
-              itemA,
-              itemAData: record,
-              implclass: 'com.usc.app.action.demo.zc.GainDynamicRelationPageModelAndDataAction'
-            }
-            let { data } = yield call(commonService.common, pl)
-            item.modelRelationShip = data
-            yield put({
-              type: `${newNamespace}/packet`, //调用各个组件model的同步packet方法
-              payload: { dataList: data.dataList, pRecord: record }
             })
           }
           const key = id || itemID
