@@ -25,6 +25,7 @@ export default function(engine) {
       OutComponent = PropertyHoc(engine)(OutComponent)
       break
     case 'relationpage':
+    case 'dynamicRelationPage':
       // delete newEngine.modelRelationShip
       newEngine.facetype = modelRelationShip && modelRelationShip.itemRelationPage ? 2 : 1
       OutComponent = Engine(newEngine)

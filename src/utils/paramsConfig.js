@@ -56,7 +56,8 @@ export const editorMap = [
   { value: 'OnSelector', name: '编码生成器' },
   { value: 'Password', name: '密码框' },
   { value: 'Slider', name: '进度条' },
-  { value: 'Rate', name: '评分/等级' }
+  { value: 'Rate', name: '评分/等级' },
+  { value: 'ItemNoSelector', name: '对象标识选择器' }
 ]
 
 export const ftypeMap = [
@@ -97,3 +98,14 @@ export const stateMap = {
   H: '历史状态',
   HS: '已作废'
 }
+
+export const relationTypeMap = [
+  { name: '关联属性页', value: 'relationproperty' },
+  { name: '关联关系页', value: 'relationpage' },
+  { name: '关联查询页', value: 'relationqueryview' },
+  { name: '关联分类视图', value: 'relationclassview' },
+  { name: '变更历史', value: 'changeHistory' },
+  { name: '输入', value: 'input' },
+  { name: '输出', value: 'output' },
+  { name: '动态关联页', value: 'dynamicRelationPage' }
+]

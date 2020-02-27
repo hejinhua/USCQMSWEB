@@ -35,7 +35,7 @@ export default {
       {
         payload: { itemRelationPage, record, facetype, pNameSpace, menuId, itemA }
       },
-      { put, select }
+      { call, put, select }
     ) {
       for (let i = 0; i < itemRelationPage.length; i++) {
         let item = itemRelationPage[i]
@@ -45,6 +45,9 @@ export default {
         let newNamespace = ''
         if (rType === 'changeHistory' || rType === 'input' || rType === 'output' || rType === 'authority') {
           newNamespace = item.itemNo + '_' + rType
+        } else if (rType === 'dynamicRelationPage') {
+          newNamespace = 'dynamicRelationPage_' + menuId
+          yield put({ type: `${newNamespace}/packet`, payload: { selectedRowKeys: [], selectedRows: [] } })
         } else if (rType !== 'relationproperty') {
           newNamespace = item.itemNo + '_' + menuId
           // 清除关联页选择数据
@@ -64,6 +67,20 @@ export default {
               type: 'common/queryClassViewNode',
               payload: { pNameSpace, item, record, facetype, namespace: newNamespace }
             })
+          } else if (rType === 'dynamicRelationPage') {
+            // 动态关联页要单独请求建模(建模数据一起返回)
+            let pl = {
+              itemNo,
+              itemA,
+              itemAData: record,
+              implclass: 'com.usc.app.action.demo.zc.GainDynamicRelationPageModelAndDataAction'
+            }
+            let { data } = yield call(commonService.common, pl)
+            item.modelRelationShip = data
+            yield put({
+              type: `${newNamespace}/packet`, //调用各个组件model的同步packet方法
+              payload: { dataList: data.dataList, pRecord: record }
+            })
           }
           const key = id || itemID
           if (facetype === 4) {
@@ -75,7 +92,7 @@ export default {
           yield put({ type: `${pNameSpace}/packet`, payload: { panes } })
         }
         // 3. 请求数据
-        if (facetype !== 4) {
+        if (facetype !== 4 && rType !== 'dynamicRelationPage') {
           yield put({
             type: `common/${rType === 'authority' ? 'queryAuthority' : 'querySubpage'}`,
             payload: { namespace: newNamespace, pRecord: record, item, sortFields }

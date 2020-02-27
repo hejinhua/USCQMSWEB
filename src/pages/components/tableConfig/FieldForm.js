@@ -91,7 +91,8 @@ class FieldForm extends Component {
         value === 'Password' ||
         value === 'Slider' ||
         value === 'Rate' ||
-        value === 'RichText'
+        value === 'RichText' ||
+        value === 'ItemNoSelector'
           ? false
           : true
     })
