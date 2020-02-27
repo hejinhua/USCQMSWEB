@@ -11,6 +11,7 @@ import RelationParamsForm from './RelationParamsForm'
 import Modal from '../common/Modal'
 import { connect } from 'dva'
 import IconSelectorForm from '../common/IconSelectorForm'
+import { relationTypeMap } from '../../../utils/paramsConfig'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -25,16 +26,6 @@ const formItemLayout = {
     sm: { span: 16 }
   }
 }
-const typeMap = [
-  { name: '关联属性页', value: 'relationproperty' },
-  { name: '关联关系页', value: 'relationpage' },
-  { name: '关联查询页', value: 'relationqueryview' },
-  { name: '关联分类视图', value: 'relationclassview' },
-  { name: '权限', value: 'authority' },
-  { name: '变更历史', value: 'changeHistory' },
-  { name: '输入', value: 'input' },
-  { name: '输出', value: 'output' }
-]
 
 class RelationItemForm extends Component {
   state = { selectRtype: '' }
@@ -119,7 +110,7 @@ class RelationItemForm extends Component {
                       initialValue: RTYPE
                     })(
                       <Select style={{ width: '100%' }} onChange={this.handleChange} disabled={this.state.disabledType}>
-                        {typeMap.map(item => (
+                        {relationTypeMap.map(item => (
                           <Option value={item.value} key={item.value}>
                             {item.name}
                           </Option>

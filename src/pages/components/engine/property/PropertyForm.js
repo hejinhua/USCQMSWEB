@@ -170,6 +170,15 @@ class PropertyForm extends Component {
           this.getSelectList(itemNo, implclass, sql, `list${index}`)
         }
       }
+      if (editor === 'ItemNoSelector') {
+        commonService
+          .get('/sysModelItem/packet', { tableName: 'usc_model_item', condition: `TYPE in ('0','1')` })
+          .then(res => {
+            if (res.data) {
+              this.setState({ itemNoList: res.data.dataList })
+            }
+          })
+      }
     })
   }
 
@@ -388,6 +397,27 @@ class PropertyForm extends Component {
           {values.map(item => (
             <Option value={item.name || item} key={item.name || item}>
               {item.name || item}
+            </Option>
+          ))}
+        </Select>
+      )
+    } else if (editor === 'ItemNoSelector') {
+      cmp = getFieldDecorator(no, config)(
+        <Select
+          showSearch
+          disabled={disabled}
+          onSearch={val => {
+            this.onSelectInput(val, no)
+          }}
+          onBlur={val => {
+            this.onSelectInput(val, no)
+          }}
+          optionFilterProp='children'
+          filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+        >
+          {(this.state.itemNoList || []).map(item => (
+            <Option value={item.ITEMNO} key={item.ITEMNO}>
+              {item.NAME}
             </Option>
           ))}
         </Select>

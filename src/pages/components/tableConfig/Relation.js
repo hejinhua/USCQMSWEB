@@ -12,16 +12,8 @@ import TableWithBtn from '../common/TableWithBtn'
 import RelationForm from './RelationForm'
 import RelationItemForm from './RelationItemForm'
 import { showConfirm } from '../../../utils/utils'
+import { relationTypeMap } from '../../../utils/paramsConfig'
 
-const typeMap = [
-  { name: '关联属性页', value: 'relationproperty' },
-  { name: '关联关系页', value: 'relationpage' },
-  { name: '关联查询页', value: 'relationqueryview' },
-  { name: '关联分类视图', value: 'relationclassview' },
-  { name: '变更历史', value: 'changeHistory' },
-  { name: '输入', value: 'input' },
-  { name: '输出', value: 'output' }
-]
 const Relation = ({ dispatch, relation, PID, relationList, relationItemList, disabled, ITEMNO }) => {
   let {
     visible,
@@ -76,7 +68,7 @@ const Relation = ({ dispatch, relation, PID, relationList, relationItemList, dis
       dataIndex: 'RTYPE',
       width: 100,
       render(text) {
-        let type = typeMap.filter(item => item.value === text)[0]
+        let type = relationTypeMap.filter(item => item.value === text)[0]
         let name = (type && type.name) || text
         return <span>{name}</span>
       }

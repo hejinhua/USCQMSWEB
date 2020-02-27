@@ -162,6 +162,20 @@ class RelationParamsForm extends Component {
                   </FormItem>
                 </div>
               </div>
+            ) : selectRtype === 'dynamicRelationPage' ? (
+              <div style={{ width: '50%' }}>
+                <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='关联对象'>
+                  {getFieldDecorator('ITEMNO', {
+                    rules: [{ required: true, message: '必填!' }],
+                    initialValue: ITEMNO
+                  })(
+                    <Input
+                      disabled
+                      addonAfter={<Icon style={{ margin: '0' }} type='plus' onClick={this.showItemNoSelect} />}
+                    />
+                  )}
+                </FormItem>
+              </div>
             ) : (
               <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
                 <div style={{ width: '50%' }}>
