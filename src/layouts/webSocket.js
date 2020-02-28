@@ -20,7 +20,7 @@ class websocket extends React.Component {
     layui.use('layim', function(layim) {
       //    判断专家是否登录
       this.socket = new Socket({
-        socketUrl: `ws://192.168.2.54:8899/ws/${localStorage.getItem('userId')}`,
+        socketUrl: `ws://localhost:8898/ws/${localStorage.getItem('userId')}`,
         socketOpen: () => {
           console.log('websocket连接建立成功')
           //初始化完成后获取离线信息

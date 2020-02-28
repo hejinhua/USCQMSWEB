@@ -11,7 +11,7 @@
 const routerConfigData = [
   {
     namespace: 'dataStats',
-    menuName: '数据统计',
+    menuName: '数据面板',
     icon: 'fund',
     component: require('../../routes/dataStats/DataStats').default
   },
