@@ -30,7 +30,7 @@ export const clickBtn = (item, engine, model) => {
     relationShipNo: relevanceNo,
     rData: dataList,
     itemGridNo: itemGrid ? itemGrid.no : modelRelationShip.itemGrid.no,
-    pid: selectedRows[0] ? selectedRows[0].id : '0',
+    pid: selectedRows[0] ? selectedRows[0].ID : '0',
     itemA,
     classNodeItemNo,
     classItemNo,
