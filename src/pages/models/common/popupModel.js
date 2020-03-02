@@ -46,7 +46,7 @@ export default {
         if (rType === 'changeHistory' || rType === 'input' || rType === 'output' || rType === 'authority') {
           newNamespace = item.itemNo + '_' + rType
         } else if (rType === 'dynamicRelationPage') {
-          newNamespace = 'dynamicRelationPage_' + menuId
+          newNamespace = pNameSpace + '_dynamic'
           yield put({ type: `${newNamespace}/packet`, payload: { selectedRowKeys: [], selectedRows: [] } })
         } else if (rType !== 'relationproperty') {
           newNamespace = item.itemNo + '_' + menuId
