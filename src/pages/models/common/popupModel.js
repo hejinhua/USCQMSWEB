@@ -47,11 +47,17 @@ export default {
           newNamespace = item.itemNo + '_' + rType
         } else if (rType === 'dynamicRelationPage') {
           newNamespace = pNameSpace + '_dynamic'
-          yield put({ type: `${newNamespace}/packet`, payload: { selectedRowKeys: [], selectedRows: [] } })
+          yield put({
+            type: `${newNamespace}/packet`,
+            payload: { selectedRowKeys: [], selectedRows: [], showTab: false }
+          })
         } else if (rType !== 'relationproperty') {
           newNamespace = item.itemNo + '_' + menuId
           // 清除关联页选择数据
-          yield put({ type: `${newNamespace}/packet`, payload: { selectedRowKeys: [], selectedRows: [] } })
+          yield put({
+            type: `${newNamespace}/packet`,
+            payload: { selectedRowKeys: [], selectedRows: [], showTab: false }
+          })
         } else {
           newNamespace = pNameSpace
         }
