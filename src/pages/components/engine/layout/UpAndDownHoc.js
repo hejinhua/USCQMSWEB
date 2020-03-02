@@ -39,7 +39,7 @@ const UpAndDownHoc = engine => WrappedComponent => {
     render() {
       let { panes, showTab, selectedRows } = this.props.model
       const { id, itemID, facetype, itemNo } = engine
-      panes = panes.filter(item => item.key !== id && item.key !== itemID)
+      // panes = panes.filter(item => item.key !== id && item.key !== itemID)
       const closeBtn = (
         <Tooltip title='关闭'>
           <Icon type='close' onClick={this.close.bind(this)} className='tab_bar_icon' />
