@@ -35,7 +35,7 @@ export default {
     ) {
       let data = {}
       if (values.ID) {
-        let upValues = { tableName, data: [oldValues], uData: values }
+        let upValues = { tableName, data: oldValues, uData: values }
         data = yield call(commonService.post, '/ModelItemRelationInfo/update', upValues)
       } else {
         let res = { tableName, data: [values], VER: 0 }
