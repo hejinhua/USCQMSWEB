@@ -158,6 +158,12 @@ const routerConfigData = [
     menuName: 'IQC检验报表',
     icon: 'fund',
     component: require('../../routes/dataStats/IncomingBad').default
+  },
+  {
+    namespace: 'ComplaintsStatistics',
+    menuName: '客户投诉统计',
+    icon: 'fund',
+    component: require('../../routes/dataStats/ComplaintsStatistics').default
   }
 ]
 export default routerConfigData
