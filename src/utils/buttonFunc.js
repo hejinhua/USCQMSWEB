@@ -40,7 +40,13 @@ export const clickBtn = (item, engine, model) => {
   let newPayload = { clickButton: item, namespace, itemNo, engine }
   if (wtype === 'itemPropertyPage') {
     // 流程特殊处理和分配角色特殊处理
-    if (implclass === 'actStartProcess' || implclass === 'assignRole') {
+    if (implclass === 'com.usc.app.action.demo.zc.ActStartProcess') {
+      window.g_app._store.dispatch({
+        type: 'actStartProcess/query',
+        payload: { selectedRows: model && model.selectedRows ? model.selectedRows : [] }
+      })
+      return
+    } else if (implclass === 'assignRole') {
       window.g_app._store.dispatch({
         type: `${implclass}/query`,
         payload: { selectedRows: model && model.selectedRows ? model.selectedRows : [] }
