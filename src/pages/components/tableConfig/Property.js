@@ -7,11 +7,12 @@
 
 import React from 'react'
 import { connect } from 'dva'
-import { Checkbox, Select, message } from 'antd'
+import { Checkbox, Select } from 'antd'
 import TableWithBtn from '../common/TableWithBtn'
 import PropertyForm from './PropertyForm'
 import SelectField from './SelectField'
 import PropertyItemForm from './PropertyItemForm'
+import PropertySetForm from './PropertySetForm'
 import { showConfirm } from '../../../utils/utils'
 import { getColumnSearchProps } from '../../../utils/columnUtil'
 
@@ -24,10 +25,14 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
     selectedRowKey,
     selectedRows,
     itemVisible,
+    setVisible,
     itemRecord,
     selectedRows2,
     selectedRowKey2
   } = property
+
+  const hasSelectRows = selectedRows && selectedRows.length > 0 ? true : false
+  const hasSelectRows2 = selectedRows2 && selectedRows2.length > 0 ? true : false
 
   const columns = [
     {
@@ -99,6 +104,23 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
             <Option value={750}>750px</Option>
             <Option value={800}>800px</Option>
           </Select>
+        )
+      }
+    },
+    {
+      title: '多肽',
+      dataIndex: 'PEPTIDE',
+      width: 50,
+      align: 'center',
+      render: (text, record) => {
+        return (
+          <Checkbox
+            disabled={disabled}
+            onChange={value => {
+              updateSingleVal(value ? 1 : 0, record, 'PEPTIDE')
+            }}
+            checked={text}
+          />
         )
       }
     }
@@ -188,15 +210,16 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
   }
 
   const addField = () => {
-    if (selectedRowKey && selectedRowKey.length > 0) {
-      dispatch({ type: 'selectField/query', payload: { ID: PID, onSelect } })
-    } else {
-      message.warning('请选择表对象!')
-    }
+    dispatch({ type: 'selectField/query', payload: { ID: PID, onSelect } })
+  }
+
+  const toogleSetModal = (itemRecord = {}) => {
+    dispatch({ type: 'property/packet', payload: { itemRecord, setVisible: !setVisible } })
   }
 
   const onSelect = data => {
     const newData = []
+    const PID = selectedRows[0].PEPTIDE ? selectedRows2[0].ID : null
     data.forEach(i => {
       const obj = {}
       obj.NO = i.NO
@@ -204,6 +227,7 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
       obj.NAME = i.NAME
       obj.EDITABLE = 1
       obj.DEFAULTV = i.DEFAULTV
+      obj.PID = PID
       newData.push(obj)
     })
     dispatch({
@@ -243,60 +267,54 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
     },
     {
       name: '修改',
-      disabled,
+      disabled: disabled || !hasSelectRows,
       func: () => {
-        if (selectedRows[0]) {
-          toogleModal(selectedRows[0])
-        } else {
-          message.warning('请选择表对象!')
-        }
+        toogleModal(selectedRows[0])
       }
     },
     {
       name: '删除',
-      disabled,
+      disabled: disabled || !hasSelectRows,
       func: () => {
-        if (selectedRows[0]) {
-          showConfirm(() => {
-            del(selectedRows[0])
-          })
-        } else {
-          message.warning('请选择表对象!')
-        }
+        showConfirm(() => {
+          del(selectedRows[0])
+        })
       }
     }
   ]
 
   const btns2 = [
     {
-      name: '添加',
-      disabled,
+      name: '添加字段',
+      disabled:
+        disabled ||
+        !hasSelectRows ||
+        (selectedRows[0].PEPTIDE ? (hasSelectRows2 && selectedRows2[0].PID === '0' ? false : true) : false),
       func: () => {
         addField()
       }
     },
     {
       name: '修改',
-      disabled,
+      disabled: disabled || !hasSelectRows || !hasSelectRows2,
       func: () => {
-        if (selectedRows2[0]) {
-          toogleItem(selectedRows2[0])
-        } else {
-          message.warning('请选择表对象!')
-        }
+        toogleItem(selectedRows2[0])
       }
     },
     {
       name: '删除',
-      disabled,
+      disabled: disabled || !hasSelectRows || !hasSelectRows2,
       func: () => {
-        if (selectedRows2[0]) {
-          showConfirm(() => {
-            delItem(selectedRows2[0])
-          })
-        } else {
-          message.warning('请选择表对象!')
-        }
+        showConfirm(() => {
+          delItem(selectedRows2[0])
+        })
+      }
+    },
+    {
+      name: '新建集合',
+      disabled: disabled || !hasSelectRows || !selectedRows[0].PEPTIDE,
+      func: () => {
+        toogleSetModal()
       }
     }
   ]
@@ -309,7 +327,8 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
     listName: 'propertyItemList',
     tableName: 'usc_model_property_field',
     canDragRow: isModeling,
-    rowSelection: rowSelection2
+    rowSelection: rowSelection2,
+    isTree: hasSelectRows && selectedRows[0].PEPTIDE ? true : false
   }
 
   return (
@@ -337,6 +356,14 @@ const Property = ({ dispatch, property, PID, propertyList, propertyItemList, dis
         PID={selectedRows[0] && selectedRows[0].ID}
         record={itemRecord}
         list={propertyItemList}
+      />
+      <PropertySetForm
+        width={700}
+        title='属性页集合'
+        visible={setVisible}
+        toogleModal={toogleSetModal}
+        selectedRows={selectedRows[0]}
+        record={itemRecord}
       />
       <SelectField />
     </div>

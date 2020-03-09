@@ -29,8 +29,12 @@ const ModalHoc = engine => WrappedComponent => {
       switch (wtype) {
         case 'itemPropertyPage':
         case 'classNodeItemPropertyNo':
-          if (this.childForm) {
-            this.childForm.Ok(e, this.confirm)
+          if (engine.peptide) {
+            this.childRef.onOk(e, this.confirm)
+          } else {
+            if (this.childForm) {
+              this.childForm.Ok(e, this.confirm)
+            }
           }
           break
         case 'itemRelationPage':
@@ -109,6 +113,10 @@ const ModalHoc = engine => WrappedComponent => {
           {engine.okText || '确认'}
         </Button>
       )
+      const props = {}
+      if (!engine.peptide) {
+        props.wrappedComponentRef = form => (this.childForm = form)
+      }
       return (
         <Modal
           width={engine.width || '80%'}
@@ -118,7 +126,14 @@ const ModalHoc = engine => WrappedComponent => {
           onOk={this.onOk}
           footer={wtype === 'itemRelationPage' ? null : btnsCmp}
         >
-          <WrappedComponent {...this.props} height={400} wrappedComponentRef={form => (this.childForm = form)} />
+          <WrappedComponent
+            getInstance={ele => {
+              this.childRef = ele
+            }}
+            {...this.props}
+            height={400}
+            {...props}
+          />
         </Modal>
       )
     }
