@@ -6,7 +6,7 @@
  * @Last Modified time: 2019-06-03 14:05:22
  */
 import React, { Component } from 'react'
-import { Form, Input, message, Select } from 'antd'
+import { Form, Input, message, Select, Checkbox } from 'antd'
 import { connect } from 'dva'
 import Modal from '../common/Modal'
 
@@ -30,6 +30,7 @@ class PropertyForm extends Component {
       if (!err) {
         callback()
         const { PID, record, dispatch } = this.props
+        values.PEPTIDE = values.PEPTIDE ? 1 : 0
         await dispatch({ type: 'tableConfig/addOrEditItem', payload: { values, PID, record } })
         callback()
       } else {
@@ -40,7 +41,7 @@ class PropertyForm extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form
-    let { NO, NAME, ID, WIDTH, COLUMNS } = this.props.record
+    let { NO, NAME, ID, WIDTH, COLUMNS, PEPTIDE } = this.props.record
     const onRules = (rule, value, callback) => {
       let list = this.props.list
       if (ID) {
@@ -53,7 +54,6 @@ class PropertyForm extends Component {
           }
         }
       })
-      // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
       callback()
     }
     return (
@@ -113,6 +113,16 @@ class PropertyForm extends Component {
                     {getFieldDecorator('WIDTH', {
                       initialValue: WIDTH || 600
                     })(<Input addonAfter='px' />)}
+                  </FormItem>
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='多肽'>
+                    {getFieldDecorator('PEPTIDE', {
+                      initialValue: PEPTIDE,
+                      valuePropName: 'checked'
+                    })(<Checkbox />)}
                   </FormItem>
                 </th>
               </tr>
