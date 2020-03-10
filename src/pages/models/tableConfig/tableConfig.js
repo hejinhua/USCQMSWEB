@@ -375,7 +375,7 @@ export default {
         message.success(data.data.info)
         yield put({
           type: `${namespace}/packet`,
-          payload: { itemVisible: false, selectedRows2: data.data.dataList }
+          payload: { itemVisible: false, selectedRows2: data.data.dataList, setVisible: false }
         })
         yield put({ type: 'queryRootItem', payload: { PID } })
       }

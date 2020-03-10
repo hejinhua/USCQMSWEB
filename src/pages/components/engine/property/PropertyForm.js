@@ -186,12 +186,12 @@ class PropertyForm extends Component {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { pageFieldList, model, engine, onOk, record } = this.props
+        const { pageFieldList, onOk, record } = this.props
         if (onOk && typeof onOk === 'function') {
           onOk(values, record)
         } else {
           let file = null
-          engine.pRecord = model.pRecord
+          // engine.pRecord = model.pRecord
           pageFieldList.forEach(item => {
             Object.keys(values).forEach(val => {
               if (val === item.no && values[val]) {
@@ -282,9 +282,9 @@ class PropertyForm extends Component {
 
   //编码生成器
   showOnSelector = item => () => {
-    const { showBtn, engine } = this.props
+    const { showBtn, itemNo } = this.props
     if (!showBtn || !item.editAble) return
-    let { itemNo } = engine
+    // let { itemNo } = engine
     if (item.editParams !== null || '') {
       const values = JSON.parse(item.editParams)
       values.itemNo = itemNo
