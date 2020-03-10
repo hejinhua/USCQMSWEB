@@ -16,8 +16,10 @@ const PropertiesHoc = engine => WrappedComponent => {
     constructor(props) {
       super(props)
       const { peptidePageList } = engine
-      this.state = {
-        activeKey: peptidePageList[0] && peptidePageList[0].id
+      if (peptidePageList && peptidePageList[0]) {
+        this.state = {
+          activeKey: peptidePageList[0] && peptidePageList[0].id
+        }
       }
       const { getInstance } = props
       if (getInstance && typeof getInstance === 'function') {
@@ -25,17 +27,19 @@ const PropertiesHoc = engine => WrappedComponent => {
       }
     }
     componentDidMount() {
-      const { peptidePageList } = engine
-      peptidePageList.forEach((item, index) => {
-        if (index) {
-          setTimeout(() => {
-            this.onChange(item.id)
-          }, 1)
-        }
-      })
-      setTimeout(() => {
-        this.onChange(peptidePageList[0].id)
-      }, 1)
+      const { peptidePageList, peptide, propertyType } = engine
+      if (peptide && propertyType === 'itemPropertyPage' && peptidePageList[0]) {
+        peptidePageList.forEach((item, index) => {
+          if (index) {
+            setTimeout(() => {
+              this.onChange(item.id)
+            }, 1)
+          }
+        })
+        setTimeout(() => {
+          this.onChange(peptidePageList[0].id)
+        }, 1)
+      }
     }
     onOk = (e, confirm) => {
       const { peptidePageList } = engine
@@ -63,10 +67,22 @@ const PropertiesHoc = engine => WrappedComponent => {
       let cmp = null
       if (propertyType === 'itemRelationPage') {
         const {
-          itemRelationPropertyPage: { pageFieldList, columns }
+          itemRelationPropertyPage: { pageFieldList, columns, peptide, peptidePageList }
         } = engine || engine.modelRelationShip
         const record = model && model.selectedRows ? model.selectedRows[0] : {}
-        cmp = <PropertyForm columns={columns} pageFieldList={pageFieldList} showBtn={false} record={record} />
+        if (peptide) {
+          cmp = (
+            <Tabs defaultActiveKey={peptidePageList[0].id}>
+              {peptidePageList.map(item => (
+                <TabPane className='tab_pane' tab={item.name} key={item.id}>
+                  <PropertyForm columns={columns} pageFieldList={item.pageFieldList} showBtn={false} record={record} />
+                </TabPane>
+              ))}
+            </Tabs>
+          )
+        } else {
+          cmp = <PropertyForm columns={columns} pageFieldList={pageFieldList} showBtn={false} record={record} />
+        }
       } else if (propertyType === 'itemPropertyPage') {
         if (peptide) {
           cmp = (
@@ -75,7 +91,6 @@ const PropertiesHoc = engine => WrappedComponent => {
                 <TabPane className='tab_pane' tab={item.name} key={item.id}>
                   <PropertyForm
                     wrappedComponentRef={form => (this[`childForm${index}`] = form)}
-                    engine={engine}
                     {...engine}
                     pageFieldList={item.pageFieldList}
                     record={model.record}
@@ -86,7 +101,7 @@ const PropertiesHoc = engine => WrappedComponent => {
             </Tabs>
           )
         } else {
-          cmp = <PropertyForm engine={engine} {...engine} record={model.record} {...this.props} />
+          cmp = <PropertyForm {...engine} record={model.record} {...this.props} />
         }
       }
       return (
