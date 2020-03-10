@@ -117,6 +117,12 @@ class ContextMenu extends Component {
           <MenuItem key='-2' className={styles.TreeMenu}>
             查询全部
           </MenuItem>
+          <MenuItem key='-3' className={styles.TreeMenu}>
+            导出当前页
+          </MenuItem>
+          <MenuItem key='-4' className={styles.TreeMenu}>
+            导出全部
+          </MenuItem>
         </Menu>
       </div>
     )
