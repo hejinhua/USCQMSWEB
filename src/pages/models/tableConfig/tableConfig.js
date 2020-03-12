@@ -171,7 +171,7 @@ export default {
           type: 'toogleModal',
           payload: { selectedRows: data.data.dataList }
         })
-        yield put({ type: 'query' })
+        yield put({ type: 'query', payload: { sql: values.ID ? 'sitem=0' : `state IN('C','U')` } })
       }
     },
     *del(

@@ -20,7 +20,7 @@ class CodeStandardForm extends Component {
       if (!err) {
         //保存和更新数据
         const values = {}
-        if (this.props.record.id != null) {
+        if (this.props.record.ID != null) {
           //修改
           delete this.props.record.children
           values.hData = [this.props.record]
@@ -33,17 +33,17 @@ class CodeStandardForm extends Component {
           values.implclass = 'com.usc.app.action.CreateObjAction'
         }
         let itemPropertyPageNo = 'group'
-        let dataType = 0
+        // let dataType = 0
         if (val.hasOwnProperty('PREFIX')) {
           itemPropertyPageNo = 'PREFIX'
-          dataType = 1
+          // dataType = 1
         }
-        if (val.hasOwnProperty('type')) {
+        if (val.hasOwnProperty('TYPE')) {
           itemPropertyPageNo = 'code'
-          dataType = 2
+          // dataType = 2
         }
         values.itemPropertyPageNo = itemPropertyPageNo
-        val.dataType = dataType
+        val.DATATYPE = val.DATATYPE || this.props.createType || 0
         values.data = val
         this.props.dispatch({ type: 'codeStandard/create', payload: { values } })
       } else {
@@ -53,7 +53,19 @@ class CodeStandardForm extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form //声明验证
-    const { PID, NAME, OBJECT, TYPE, CODE_SEGMENT, PREFIX, CONNECTOR, STARTCODE, ENDCODE, REMARK } = this.props.record //声明record
+    const {
+      PID,
+      NAME,
+      OBJECT,
+      TYPE,
+      CODE_SEGMENT,
+      PREFIX,
+      CONNECTOR,
+      STARTCODE,
+      ENDCODE,
+      REMARK,
+      DATATYPE
+    } = this.props.record //声明record
     const createType = this.props.createType
     const isType = i => {
       if (i === undefined && createType === 0) {
@@ -105,6 +117,11 @@ class CodeStandardForm extends Component {
                       initialValue: PID
                     })(<Input hidden />)}
                   </FormItem>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }}>
+                    {getFieldDecorator('DATATYPE', {
+                      initialValue: DATATYPE
+                    })(<Input hidden />)}
+                  </FormItem>
                   <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='名称'>
                     {getFieldDecorator('NAME', {
                       rules: [{ required: true, message: '请输入名称!' }],
@@ -120,7 +137,7 @@ class CodeStandardForm extends Component {
                     })(
                       <Select style={{ width: '100%' }}>
                         {newList.map(item => (
-                          <Option value={item.itemno} key={item.id}>
+                          <Option value={item.ITEMNO} key={item.ID}>
                             {item.NAME}
                           </Option>
                         ))}
@@ -154,7 +171,7 @@ class CodeStandardForm extends Component {
               <tr>
                 <td>
                   <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='编码类型'>
-                    {getFieldDecorator('type', {
+                    {getFieldDecorator('TYPE', {
                       rules: [{ required: true, message: '请选择编码类型!' }],
                       initialValue: isType(TYPE)
                     })(

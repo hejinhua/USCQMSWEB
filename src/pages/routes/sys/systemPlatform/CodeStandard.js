@@ -11,21 +11,21 @@ const CodeStandard = ({ dispatch, codeStandard }) => {
 
   const showModel = val => {
     if (val === 0) {
-      dispatch({ type: 'codeStandard/showModal', payload: { record: { pid: 0 }, createType: val } })
+      dispatch({ type: 'codeStandard/showModal', payload: { record: { PID: '0' }, createType: val } })
     } else if (val === 1) {
-      if ((selectRow && selectRow.dataType === 0) || (selectRow && selectRow.dataType === 1)) {
+      if ((selectRow && selectRow.DATATYPE === 0) || (selectRow && selectRow.DATATYPE === 1)) {
         dispatch({
           type: 'codeStandard/showModal',
-          payload: { record: { object: selectRow.object, pid: selectRow.id }, createType: val }
+          payload: { record: { object: selectRow.OBJECT, PID: selectRow.ID }, createType: val }
         })
       } else {
         message.warning('请选择组或者前缀数据！')
       }
     } else if (val === 2) {
-      if ((selectRow && selectRow.dataType === 1) || (selectRow && selectRow.dataType === 0)) {
+      if (selectRow && selectRow.DATATYPE !== 2) {
         dispatch({
           type: 'codeStandard/showModal',
-          payload: { record: { object: selectRow.object, pid: selectRow.id }, createType: val }
+          payload: { record: { object: selectRow.OBJECT, PID: selectRow.ID }, createType: val }
         })
       } else {
         message.warning('请选择组或者前缀数据！')
@@ -34,7 +34,7 @@ const CodeStandard = ({ dispatch, codeStandard }) => {
   }
   const editModel = () => {
     if (selectRow) {
-      dispatch({ type: 'codeStandard/showModal', payload: { record: selectRow, createType: selectRow.dataType } })
+      dispatch({ type: 'codeStandard/showModal', payload: { record: selectRow, createType: selectRow.DATATYPE } })
     } else {
       console.log(selectRow)
       message.warning('请选择需要修改的数据!')

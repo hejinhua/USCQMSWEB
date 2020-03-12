@@ -31,15 +31,16 @@ const CodeStandard = ({
     { editor: 'TextBox', name: '所属对象', no: 'OBJECT' },
     { editor: 'TextBox', name: '编码类型', no: 'TYPE' },
     { editor: 'TextBox', name: '编码', no: 'PREFIX' },
-    { editor: 'TextBox', name: '连接符', no: 'CONNECTOR' }
+    { editor: 'TextBox', name: '连接符', no: 'CONNECTOR' },
+    { editor: 'TextBox', name: '起始码', no: 'STARTCODE' },
+    { editor: 'TextBox', name: '终止码', no: 'ENDCODE' }
   ]
   let pageFieldList2 = [
     { editor: 'TextBox', name: '名称', no: 'NAME' },
-    { editor: 'TextBox', name: '所属对象', no: 'OBJETC' },
+    { editor: 'TextBox', name: '所属对象', no: 'OBJECT' },
     { editor: 'TextBox', name: '编码类型', no: 'TYPE' },
     { editor: 'TextBox', name: '编码段长', no: 'CODE_SEGMENT' },
-    { editor: 'TextBox', name: '起始码', no: 'STARTCODE' },
-    { editor: 'TextBox', name: '终止码', no: 'ENDCODE' },
+    { editor: 'TextBox', name: '分类码', no: 'PREFIX' },
     { editor: 'TextBox', name: '备注', no: 'REMARK', allowNull: true }
   ]
   if (selectRow && selectRow.DATATYPE === 0) {
