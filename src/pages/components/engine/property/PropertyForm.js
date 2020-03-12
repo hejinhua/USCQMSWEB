@@ -283,7 +283,7 @@ class PropertyForm extends Component {
   //编码生成器
   showOnSelector = item => () => {
     const { showBtn, itemNo } = this.props
-    if (!showBtn || !item.editAble) return
+    if (!showBtn) return
     // let { itemNo } = engine
     if (item.editParams !== null || '') {
       const values = JSON.parse(item.editParams)
