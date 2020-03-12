@@ -32,19 +32,21 @@ class CodeStandardForm extends Component {
           //新增
           values.implclass = 'com.usc.app.action.CreateObjAction'
         }
+        console.log(val)
         let itemPropertyPageNo = 'group'
-        // let dataType = 0
+        let DATATYPE = 0
         if (val.hasOwnProperty('PREFIX')) {
-          itemPropertyPageNo = 'PREFIX'
-          // dataType = 1
+          itemPropertyPageNo = 'prefix'
+          DATATYPE = 1
         }
-        if (val.hasOwnProperty('TYPE')) {
+        if (val.hasOwnProperty('CODE_SEGMENT')) {
           itemPropertyPageNo = 'code'
-          // dataType = 2
+          DATATYPE = 2
         }
         values.itemPropertyPageNo = itemPropertyPageNo
-        val.DATATYPE = val.DATATYPE || this.props.createType || 0
+        val.DATATYPE = DATATYPE
         values.data = val
+        console.log(values)
         this.props.dispatch({ type: 'codeStandard/create', payload: { values } })
       } else {
         return message.error('保存失败')
@@ -53,19 +55,7 @@ class CodeStandardForm extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form //声明验证
-    const {
-      PID,
-      NAME,
-      OBJECT,
-      TYPE,
-      CODE_SEGMENT,
-      PREFIX,
-      CONNECTOR,
-      STARTCODE,
-      ENDCODE,
-      REMARK,
-      DATATYPE
-    } = this.props.record //声明record
+    const { PID, NAME, OBJECT, TYPE, CODE_SEGMENT, PREFIX, CONNECTOR, STARTCODE, ENDCODE, REMARK } = this.props.record //声明record
     const createType = this.props.createType
     const isType = i => {
       if (i === undefined && createType === 0) {
@@ -115,11 +105,6 @@ class CodeStandardForm extends Component {
                   <FormItem {...formItemLayout} style={{ marginBottom: 0 }}>
                     {getFieldDecorator('PID', {
                       initialValue: PID
-                    })(<Input hidden />)}
-                  </FormItem>
-                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }}>
-                    {getFieldDecorator('DATATYPE', {
-                      initialValue: DATATYPE
                     })(<Input hidden />)}
                   </FormItem>
                   <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='名称'>

@@ -164,6 +164,12 @@ const routerConfigData = [
     menuName: '客户投诉统计',
     icon: 'fund',
     component: require('../../routes/dataStats/ComplaintsStatistics').default
+  },
+  {
+    namespace: 'QcCostStatistics',
+    menuName: '质量成本统计',
+    icon: 'fund',
+    component: require('../../routes/dataStats/QcCostStatistics').default
   }
 ]
 export default routerConfigData

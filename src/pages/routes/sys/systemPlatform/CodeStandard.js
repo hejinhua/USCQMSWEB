@@ -22,7 +22,7 @@ const CodeStandard = ({ dispatch, codeStandard }) => {
         message.warning('请选择组或者前缀数据！')
       }
     } else if (val === 2) {
-      if (selectRow && selectRow.DATATYPE !== 2) {
+      if ((selectRow && selectRow.DATATYPE === 1) || (selectRow && selectRow.DATATYPE === 0)) {
         dispatch({
           type: 'codeStandard/showModal',
           payload: { record: { object: selectRow.OBJECT, PID: selectRow.ID }, createType: val }
@@ -36,7 +36,6 @@ const CodeStandard = ({ dispatch, codeStandard }) => {
     if (selectRow) {
       dispatch({ type: 'codeStandard/showModal', payload: { record: selectRow, createType: selectRow.DATATYPE } })
     } else {
-      console.log(selectRow)
       message.warning('请选择需要修改的数据!')
     }
   }
