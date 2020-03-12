@@ -31,16 +31,15 @@ const CodeStandard = ({
     { editor: 'TextBox', name: '所属对象', no: 'OBJECT' },
     { editor: 'TextBox', name: '编码类型', no: 'TYPE' },
     { editor: 'TextBox', name: '编码', no: 'PREFIX' },
-    { editor: 'TextBox', name: '连接符', no: 'CONNECTOR' },
-    { editor: 'TextBox', name: '起始码', no: 'STARTCODE' },
-    { editor: 'TextBox', name: '终止码', no: 'ENDCODE' }
+    { editor: 'TextBox', name: '连接符', no: 'CONNECTOR' }
   ]
   let pageFieldList2 = [
     { editor: 'TextBox', name: '名称', no: 'NAME' },
     { editor: 'TextBox', name: '所属对象', no: 'OBJECT' },
     { editor: 'TextBox', name: '编码类型', no: 'TYPE' },
     { editor: 'TextBox', name: '编码段长', no: 'CODE_SEGMENT' },
-    { editor: 'TextBox', name: '分类码', no: 'PREFIX' },
+    { editor: 'TextBox', name: '起始码', no: 'STARTCODE' },
+    { editor: 'TextBox', name: '终止码', no: 'ENDCODE' },
     { editor: 'TextBox', name: '备注', no: 'REMARK', allowNull: true }
   ]
   if (selectRow && selectRow.DATATYPE === 0) {
@@ -53,14 +52,26 @@ const CodeStandard = ({
   let newList = ergodicRoot(list)
   const generateTree = data =>
     data.map(item => {
+      const title = (
+        <span>
+          {<span>{item.NAME}</span>}
+          {item.PREFIX ? (
+            <span style={{ color: '#e8d098' }}>
+              ({item.TYPE} / {item.PREFIX})
+            </span>
+          ) : (
+            item.TYPE !== 'block_code' && <span style={{ color: '#1890ff' }}>({item.TYPE})</span>
+          )}
+        </span>
+      )
       if (item.children) {
         return (
-          <TreeNode key={item.ID} title={item.NAME} dataRef={item}>
+          <TreeNode key={item.ID} title={title} dataRef={item}>
             {generateTree(item.children)}
           </TreeNode>
         )
       }
-      return <TreeNode key={item.ID} title={item.NAME} dataRef={item} />
+      return <TreeNode key={item.ID} title={title} dataRef={item} />
     })
   return (
     <div>
