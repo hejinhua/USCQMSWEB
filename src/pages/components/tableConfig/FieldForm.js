@@ -151,7 +151,8 @@ class FieldForm extends Component {
       ALLOWNULL,
       DEFAULTV,
       EDITPARAMS,
-      STATE
+      STATE,
+      SUPQUERY
     } = this.props.record //声明record
 
     const onRules = (rule, value, callback) => {
@@ -325,7 +326,17 @@ class FieldForm extends Component {
                   </FormItem>
                 </th>
                 <th>
-                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='备注'>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='支持高级搜索'>
+                    {getFieldDecorator('SUPQUERY', {
+                      initialValue: SUPQUERY,
+                      valuePropName: 'checked'
+                    })(<Checkbox />)}
+                  </FormItem>
+                </th>
+              </tr>
+              <tr>
+                <th colSpan='2'>
+                  <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='备注'>
                     {getFieldDecorator('REMARK', {
                       initialValue: REMARK
                     })(<TextArea autosize={{ minRows: 2 }} />)}
