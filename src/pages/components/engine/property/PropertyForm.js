@@ -186,7 +186,7 @@ class PropertyForm extends Component {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { pageFieldList, onOk, record } = this.props
+        const { pageFieldList, onOk, record, advancedSearch } = this.props
         if (onOk && typeof onOk === 'function') {
           onOk(values, record)
         } else {
@@ -197,7 +197,11 @@ class PropertyForm extends Component {
               if (val === item.no && values[val]) {
                 const { editor } = item
                 if (editor === 'DateTime') {
-                  values[val] = values[val].format(JSON.parse(item.editParams).format)
+                  if (!advancedSearch) {
+                    values[val] = values[val].format(JSON.parse(item.editParams).format)
+                  } else {
+                    values[val] = values[val].map(i => i && i.format(JSON.parse(item.editParams).format))
+                  }
                 } else if (editor === 'FileSelector') {
                   file = this[`${val}File`]
                 } else if (editor === 'UsersSelector') {
@@ -317,7 +321,7 @@ class PropertyForm extends Component {
   getEditorCmp = (item, index) => {
     const selectList = this.state[`list${index}`] || []
     const { getFieldDecorator } = this.props.form
-    let { record = null, showBtn, mapRecord = null } = this.props
+    let { record = null, showBtn, mapRecord = null, advancedSearch } = this.props
     let { editor, editParams, allowNull, no, editAble, fType, accuracy, defaultV, name, fLength } = item
     const params = editParams ? JSON.parse(editParams) : editParams
     let initVal = defaultV
@@ -378,9 +382,13 @@ class PropertyForm extends Component {
             />
           ))
     } else if (editor === 'DateTime') {
-      cmp = getFieldDecorator(no, { ...config, initialValue: initVal && moment(initVal) })(
-        <DatePicker format={params.format} style={{ width: '100%' }} disabled={disabled} placeholder='' />
-      )
+      cmp = !advancedSearch
+        ? getFieldDecorator(no, { ...config, initialValue: initVal && moment(initVal) })(
+            <DatePicker format={params.format} style={{ width: '100%' }} disabled={disabled} placeholder='' />
+          )
+        : getFieldDecorator(no, { ...config, initialValue: [] })(
+            <DatePicker.RangePicker format={params.format} style={{ width: '100%' }} disabled={disabled} />
+          )
     } else if (editor === 'ValueList') {
       const { canInput, values = [] } = params
       cmp = getFieldDecorator(no, config)(
@@ -428,7 +436,16 @@ class PropertyForm extends Component {
         if (val && val[0]) config.initialValue = val[0].key
       }
       cmp = getFieldDecorator(no, config)(
-        <Select disabled={disabled}>
+        <Select
+          showSearch
+          disabled={disabled}
+          onSearch={val => {
+            this.onSelectInput(val, no)
+          }}
+          onBlur={val => {
+            this.onSelectInput(val, no)
+          }}
+        >
           {params.values.map(item => (
             <Option value={item.key} key={item.name}>
               {item.name}

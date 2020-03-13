@@ -379,6 +379,29 @@ export default {
         payload: { dataList: dataList.concat(data.dataList), queryWord, page }
       })
     },
+    // 高级搜索查询
+    *advancedSearch({ payload }, { call, put }) {
+      const { engine, page, dataList = [], queryWord } = payload
+      const {
+        namespace,
+        itemNo,
+        params: { condition }
+      } = engine
+      let params = {
+        itemNo,
+        condition,
+        page,
+        queryWord,
+        implclass: 'com.usc.app.query.search.AdvancedSearchObjAction'
+      }
+      let { data } = yield call(commonService.common, params)
+      if (data) {
+        yield put({
+          type: `${namespace}/packet`,
+          payload: { dataList: dataList.concat(data.dataList), page, showTab: false }
+        })
+      }
+    },
     // 查询分类视图树节点
     *queryClassViewNode({ payload }, { call, put }) {
       const { pNameSpace, item, record, facetype, namespace } = payload
