@@ -43,7 +43,7 @@ export const clickBtn = (item, engine, model) => {
     if (implclass === 'com.usc.app.action.demo.zc.ActStartProcess') {
       window.g_app._store.dispatch({
         type: 'actStartProcess/query',
-        payload: { selectedRows: model && model.selectedRows ? model.selectedRows : [] }
+        payload: { selectedRows: model && model.selectedRows ? model.selectedRows : [], itemNo: itemNo }
       })
       return
     } else if (implclass === 'assignRole') {
