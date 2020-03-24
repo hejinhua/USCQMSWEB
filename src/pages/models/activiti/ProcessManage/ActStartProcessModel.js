@@ -43,14 +43,15 @@ export default {
     /*打开modal显示数据*/
     *query(
       {
-        payload: { selectedRows }
+        payload: { selectedRows, itemNo }
       },
       { call, put }
     ) {
       yield put({
         type: 'showModal'
       })
-      let { data } = yield call(commonService.get, '/act/process/getProcdefProcess')
+      const values = { itemNo: itemNo }
+      let { data } = yield call(commonService.post, '/act/process/getProcdefProcessByProcdefId', values)
       if (data) {
         yield put({
           type: 'packet',

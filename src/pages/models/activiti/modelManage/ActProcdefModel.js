@@ -109,7 +109,7 @@ export default {
         itemGridNo: 'default',
         page: 1,
         userName: localStorage.getItem('userName'),
-        condition: `PROCDEF_ID = '${selectedRowKey}'`
+        condition: `PROCDEF_ID = '${selectedRowKey}' AND DEL = 0`
       }
       let noticeList = yield call(commonService.common, noticeValues)
       yield put({
