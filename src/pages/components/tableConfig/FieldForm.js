@@ -1,15 +1,16 @@
 /*
  * @Author: hjh
  * @Date: 2019-08-10 10:02:55
- * @LastEditTime : 2019-12-24 14:40:46
+ * @LastEditTime: 2020-03-25 15:18:24
  * @Descripttion:
  */
-import React, { Component } from 'react'
-import { Form, Input, Checkbox, message, Select } from 'antd'
+import React, { Component, Fragment } from 'react'
+import { Form, Input, Checkbox, message, Select, Icon } from 'antd'
 import { connect } from 'dva'
 import FiledEditorForm from './FieldEditorForm'
 import Modal from '../common/Modal'
 import { editorMap, ftypeMap } from '../../../utils/paramsConfig'
+import SelectItemNo from './SelectItemNo'
 
 const formItemLayout = {
   labelCol: {
@@ -39,7 +40,8 @@ class FieldForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      EDITOR: (this.props.record && this.props.record.EDITOR) || 'TextBox'
+      EDITOR: (this.props.record && this.props.record.EDITOR) || 'TextBox',
+      SUPLINK: this.props.record && this.props.record.SUPLINK
     }
   }
 
@@ -63,9 +65,13 @@ class FieldForm extends Component {
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
         callback()
+        const { itemNo, condition } = values
         values.ONLY = values.ONLY ? 1 : 0
         values.ALLOWNULL = values.ALLOWNULL ? 1 : 0
         values.TYPE = values.TYPE === '业务字段' ? 1 : values.TYPE === '系统字段' ? 0 : values.TYPE
+        values.LINKPARAMS = JSON.stringify({ itemNo, condition })
+        delete values.itemNo
+        delete values.condition
         await this.props.dispatch({
           type: 'tableConfig/addOrEditItem',
           payload: { values, PID: this.props.PID, record: this.props.record }
@@ -126,6 +132,19 @@ class FieldForm extends Component {
       isAllownullDisabled: e.target.checked ? true : false
     })
   }
+
+  SUPAChange = e => {
+    this.setState({ SUPLINK: e.target.checked ? true : false })
+  }
+
+  showSelectItemNo = () => {
+    this.props.dispatch({ type: 'selectItemNo/query', payload: { onSelect: this.itemNoSelect } })
+  }
+
+  itemNoSelect = rows => {
+    this.props.form.setFieldsValue({ itemNo: rows[0].ITEMNO })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form //声明验证
     const {
@@ -152,8 +171,12 @@ class FieldForm extends Component {
       DEFAULTV,
       EDITPARAMS,
       STATE,
-      SUPQUERY
+      SUPQUERY,
+      SUPLINK,
+      LINKPARAMS
     } = this.props.record //声明record
+
+    const { itemNo, condition } = JSON.parse(LINKPARAMS || '{}')
 
     const onRules = (rule, value, callback) => {
       let fieldList = this.props.FieldList
@@ -335,14 +358,55 @@ class FieldForm extends Component {
                 </th>
               </tr>
               <tr>
-                <th colSpan='2'>
-                  <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='备注'>
+                <th>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='支持超链接'>
+                    {getFieldDecorator('SUPLINK', {
+                      initialValue: SUPLINK,
+                      valuePropName: 'checked'
+                    })(<Checkbox onChange={this.SUPAChange} />)}
+                  </FormItem>
+                </th>
+                <th>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='备注'>
                     {getFieldDecorator('REMARK', {
                       initialValue: REMARK
-                    })(<TextArea autosize={{ minRows: 2 }} />)}
+                    })(<TextArea autosize={{ minRows: 1 }} />)}
                   </FormItem>
                 </th>
               </tr>
+              {this.state.SUPLINK && (
+                <Fragment>
+                  <tr>
+                    <th>
+                      <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='超链接参数标识'>
+                        {getFieldDecorator('itemNo', {
+                          initialValue: itemNo,
+                          rules: [{ required: true, message: '此项必填!' }]
+                        })(<Input disabled addonAfter={<Icon type='plus' onClick={this.showSelectItemNo} />} />)}
+                      </FormItem>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th colSpan='2'>
+                      <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='查询条件'>
+                        {getFieldDecorator('condition', {
+                          initialValue: condition
+                        })(<TextArea />)}
+                      </FormItem>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th colSpan='2'>
+                      <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='超链接参数'>
+                        {getFieldDecorator('LINKPARAMS', {
+                          initialValue: LINKPARAMS,
+                          rules: [{ required: isEditparamsRequired, message: '此项必填!' }]
+                        })(<TextArea />)}
+                      </FormItem>
+                    </th>
+                  </tr>
+                </Fragment>
+              )}
               <tr>
                 <th colSpan='2'>
                   <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='编辑器参数'>
@@ -362,6 +426,7 @@ class FieldForm extends Component {
           editparams={EDITPARAMS}
           Action={this.Action}
         />
+        <SelectItemNo />
       </div>
     )
   }

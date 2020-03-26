@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-08-09 16:50:41
- * @LastEditTime : 2019-12-20 14:34:22
+ * @LastEditTime: 2020-03-24 09:51:47
  * @Descripttion: 参数集合
  */
 export const reqParamMap = [
@@ -109,3 +109,5 @@ export const relationTypeMap = [
   { name: '输出', value: 'output' },
   { name: '动态关联页', value: 'dynamicRelationPage' }
 ]
+
+export const mqMtype = ['SQL脚本', '存储过程', '存储过程', 'JS脚本']

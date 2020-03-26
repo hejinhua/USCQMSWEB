@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-10-31 09:32:24
- * @LastEditTime : 2019-12-30 13:54:34
+ * @LastEditTime: 2020-03-25 15:34:43
  * @Descripttion: 弹窗通用高阶组件
  */
 import { Component } from 'react'
@@ -38,6 +38,7 @@ const ModalHoc = engine => WrappedComponent => {
           }
           break
         case 'itemRelationPage':
+        case 'linkPage':
           this.toogleModal()
           break
         case 'queryItemView':

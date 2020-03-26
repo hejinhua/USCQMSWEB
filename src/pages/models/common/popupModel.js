@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-08-01 11:24:29
- * @LastEditTime : 2020-01-08 17:53:54
+ * @LastEditTime: 2020-03-25 15:54:28
  * @Descripttion: 点击按钮弹出窗口相关的请求
  */
 import * as commonService from '../../service/commonService'
@@ -112,7 +112,7 @@ export default {
       }
     },
     *loadPopup({ payload }, { call, put, select }) {
-      let { clickButton, itemNo, namespace, record, engine, rData } = payload
+      let { clickButton, itemNo, namespace, record, engine, rData, condition } = payload
       let { id, mno, wtype, values, implclass, propertyParam, reqparam } = clickButton
       reqparam = (reqparam && reqparam.split(';')) || []
       const visible = `modal-${id}`
@@ -176,6 +176,19 @@ export default {
             break
           case 'print':
             break
+          case 'linkPage':
+            namespace = `${itemNo}+${id}`
+            judgeModel(namespace)
+            modalParams.namespace = namespace
+            let { data: modelData } = yield call(commonService.post, '/sysModelToWbeClient/getModelData', {
+              itemNo,
+              condition,
+              facetype: 2
+            })
+            if (modelData) {
+              modalParams = { ...modalParams, ...modelData }
+            }
+            break
           default:
             console.log('new wtype', wtype)
         }
@@ -218,6 +231,8 @@ export default {
         if (datas) {
           newPayload = { ...newPayload, printData: datas.data.dataList }
         }
+      } else if (wtype === 'linkPage') {
+        yield put({ type: 'common/query', payload: { itemNo, namespace, condition } })
       }
       yield put({ type: `${namespace}/packet`, payload: newPayload })
     }
