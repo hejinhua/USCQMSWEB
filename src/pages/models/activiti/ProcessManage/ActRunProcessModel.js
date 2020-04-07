@@ -19,11 +19,11 @@ export default {
   effects: {
     //查询流程
     *query({}, { call, put }) {
-      let data = yield call(commonService.post, '/act/process/getRunProcess')
-      if (data) {
+      let { data } = yield call(commonService.post, '/act/process/getRunProcess')
+      if (data.flag) {
         yield put({
           type: 'packet',
-          payload: { list: data.data }
+          payload: { list: data.dataList }
         })
       }
     }

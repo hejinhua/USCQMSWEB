@@ -24,7 +24,6 @@ const ProcessActinst = ({ dispatch, processActinst }) => {
     expandedRowKeys = [],
     userList = []
   } = processActinst
-
   const processColumns = [
     {
       title: '执行环节',

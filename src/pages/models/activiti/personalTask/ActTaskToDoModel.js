@@ -22,11 +22,11 @@ export default {
     //查询流程
     *query({}, { call, put }) {
       const userName = localStorage.getItem('userName')
-      let data = yield call(commonService.post, '/act/task/getTaskToDo', { userName: userName })
-      if (data) {
+      let { data } = yield call(commonService.post, '/act/task/getTaskToDo', { userName: userName })
+      if (data.flag) {
         yield put({
           type: 'packet',
-          payload: { list: data.data }
+          payload: { list: data.dataList }
         })
       }
     }

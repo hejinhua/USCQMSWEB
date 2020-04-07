@@ -38,14 +38,14 @@ export default {
     //查询模型
     *query({}, { call, put }) {
       let { data } = yield call(commonService.get, '/act/actModel/modelist')
-      if (data) {
-        data.forEach(i => {
+      if (data.flag) {
+        data.dataList.forEach(i => {
           // metaInfo传回来的字符串转为json，方便获取信息中的描述
           i.metaInfo = JSON.parse(i.metaInfo)
         })
         yield put({
           type: 'packet',
-          payload: { list: data }
+          payload: { list: data.dataList }
         })
       }
     },
@@ -73,10 +73,10 @@ export default {
       { call, put }
     ) {
       let { data } = yield call(commonService.post, `/act/actModel/deploy/${id}`)
-      if (data.result) {
-        message.success('部署成功')
+      if (data.flag) {
+        message.success(data.info)
       } else {
-        message.error(data.Message)
+        message.error(data.info)
       }
       yield put({
         type: 'query'
@@ -102,10 +102,10 @@ export default {
         type: 'query'
       })
       // 根据结果弹出信息提示框
-      if (data.result === 'success') {
-        message.success('成功')
+      if (data.flag) {
+        message.success(data.info)
       } else {
-        message.error('失败')
+        message.error(data.info)
       }
     },
     //删除模型
@@ -116,10 +116,10 @@ export default {
         type: 'query'
       })
       // 根据结果弹出信息提示框
-      if (data.result === 'success') {
-        message.success('删除成功')
+      if (data.flag) {
+        message.success(data.info)
       } else {
-        message.error('删除失败')
+        message.error(data.info)
       }
     }
   },

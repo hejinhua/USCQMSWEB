@@ -52,10 +52,10 @@ export default {
     //查询流程
     *query({}, { call, put }) {
       let { data } = yield call(commonService.get, '/act/process/getProcdefProcess')
-      if (data) {
+      if (data.flag) {
         yield put({
           type: 'packet',
-          payload: { list: data.list }
+          payload: { list: data.dataList }
         })
       }
       //获取建模数据
@@ -131,10 +131,10 @@ export default {
         payload: {}
       })
       // 根据结果弹出信息提示框
-      if (data.result === 'success') {
-        message.success('挂起成功')
+      if (data.flag) {
+        message.success(data.info)
       } else {
-        message.error('挂起失败')
+        message.error(data.info)
       }
     },
     //激活流程
@@ -151,10 +151,10 @@ export default {
         payload: {}
       })
       // 根据结果弹出信息提示框
-      if (data.result === 'success') {
-        message.success('激活成功')
+      if (data.flag) {
+        message.success(data.info)
       } else {
-        message.error('激活失败')
+        message.error(data.info)
       }
     },
     //删除模型

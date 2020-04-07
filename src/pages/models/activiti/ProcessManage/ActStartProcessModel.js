@@ -14,10 +14,10 @@ export default {
     packet(
       state,
       {
-        payload: { data, selectedRows }
+        payload: { list, selectedRows }
       }
     ) {
-      return { ...state, ...data, selectedRows }
+      return { ...state, list, selectedRows }
     },
     showModal(state) {
       return { ...state, actVisible: true }
@@ -52,10 +52,10 @@ export default {
       })
       const values = { itemNo: itemNo }
       let { data } = yield call(commonService.post, '/act/process/getProcdefProcessByProcdefId', values)
-      if (data) {
+      if (data.flag) {
         yield put({
           type: 'packet',
-          payload: { data, selectedRows }
+          payload: { list: data.dataList, selectedRows }
         })
       }
     },
@@ -81,8 +81,8 @@ export default {
       //   otherParam: { processId: id, dataPack: selectedRows[0] }
       // }
       // let { data } = yield call(commonService.common, values)
-      if (data.result) {
-        message.success('启动成功！')
+      if (data.flag) {
+        message.success(data.info)
         yield put({
           type: 'actCancel'
         })
@@ -91,7 +91,7 @@ export default {
         //   type: 'query'
         // })
       } else {
-        message.error('启动失败！')
+        message.error(data.info)
       }
     }
   }

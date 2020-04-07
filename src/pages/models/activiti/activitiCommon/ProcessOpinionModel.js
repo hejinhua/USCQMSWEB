@@ -34,7 +34,7 @@ export default {
     ) {
       let { data } = yield call(commonService.post, `${values.url}`, values)
       if (data.flag) {
-        message.success(data.msg)
+        message.success(data.info)
         yield put({
           type: 'onCancel'
         })
@@ -43,7 +43,7 @@ export default {
           type: `${values.refreshUrl}`
         })
       } else {
-        message.error(data.msg)
+        message.error(data.info)
       }
     }
   },
