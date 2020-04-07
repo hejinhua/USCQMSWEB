@@ -5,7 +5,7 @@ import React from 'react'
 import { connect } from 'dva/index'
 import { dateToFormat } from '../../../../utils/dataToFormat'
 import ActStartProcessCmp from '../../../components/activiti/processManage/ActStartProcessCmp'
-import { Button, message } from 'antd/lib/index'
+import { Button } from 'antd/lib/index'
 import { generatorTableKey } from '../../../../utils/utils'
 
 const ActStartProcess = ({ dispatch, actStartProcess }) => {

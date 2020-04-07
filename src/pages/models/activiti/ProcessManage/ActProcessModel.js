@@ -73,7 +73,6 @@ export default {
       let { data } = yield call(commonService.post, '/sysModelToWbeClient/getModelData', {
         modelNo: itemNo
       })
-      console.log(data)
       let { grid, pageInfo, menu, property } = data
       yield put({
         type: 'objList',
@@ -95,8 +94,8 @@ export default {
         type: 'actTest/cleanSelectChange'
       })
       let { data } = yield call(commonService.post, '/act/process/startProcess', queryParam)
-      if (data.result) {
-        message.success('启动成功！')
+      if (data.flag) {
+        message.success(data.info)
         yield put({
           type: 'actCancel'
         })
@@ -105,7 +104,7 @@ export default {
           type: 'actTest/query'
         })
       } else {
-        message.error('启动失败！')
+        message.success(data.info)
       }
     }
   }

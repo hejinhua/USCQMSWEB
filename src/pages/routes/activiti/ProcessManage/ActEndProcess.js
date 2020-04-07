@@ -37,7 +37,11 @@ const ActEndProcess = ({ dispatch, actEndProcess }) => {
         let processState = ''
         if (record.processState === 'completed') {
           processState = '[正常结束]'
-          return <a href='#'>{processState}</a>
+          return (
+            <a style={{ color: 'green' }} href='#'>
+              {processState}
+            </a>
+          )
         }
         return <span style={{ color: 'red' }}>{record.processState}</span>
       }

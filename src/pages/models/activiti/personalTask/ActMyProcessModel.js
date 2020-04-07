@@ -21,11 +21,11 @@ export default {
     //查询流程
     *query({}, { call, put }) {
       const userName = localStorage.getItem('userName')
-      let data = yield call(commonService.post, '/act/task/getMyProcess', { userName: userName })
-      if (data) {
+      let { data } = yield call(commonService.post, '/act/task/getMyProcess', { userName: userName })
+      if (data.flag) {
         yield put({
           type: 'packet',
-          payload: { list: data.data }
+          payload: { list: data.dataList }
         })
       }
     },
@@ -37,12 +37,12 @@ export default {
     ) {
       let { data } = yield call(commonService.post, '/act/task/processRevoke', { processInstanceId: processInstanceId })
       if (data.flag) {
-        message.success(data.msg)
+        message.success(data.info)
         yield put({
           type: 'query'
         })
       } else {
-        message.error(data.msg)
+        message.error(data.info)
       }
     }
   },

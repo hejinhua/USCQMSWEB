@@ -53,7 +53,7 @@ const ActProcdef = ({ dispatch, actProcdef }) => {
       render: (text, record) => {
         return (
           <div>
-            {record.suspensionState ? (
+            {record.SUSPENSIONSTATE ? (
               <Button
                 style={{ marginLeft: 5 }}
                 size='small'
