@@ -1,3 +1,5 @@
+import { reportIP } from '../../../utils/paramsConfig'
+
 const modelMenus = [
   { NAME: '配置平台', ICON: 'setting', NO: 'configPlatform', ID: 'config', PID: '1' },
   { NAME: '业务对象', ICON: 'project', NO: 'tableConfig', ID: 'tableConfig', PID: 'config' },
@@ -16,7 +18,7 @@ const modelMenus = [
     ID: 'gridReportList',
     PID: 'reportList',
     FACETYPE: 6,
-    PARAMS: JSON.stringify({ url: 'http://127.0.0.1:18080/RDP-SERVER/modules/rdp/list.html' })
+    PARAMS: JSON.stringify({ url: `${reportIP}/RDP-SERVER/modules/rdp/list.html` })
   },
   {
     NAME: '大屏报表',
@@ -25,7 +27,7 @@ const modelMenus = [
     ID: 'screenReportList',
     PID: 'reportList',
     FACETYPE: 6,
-    PARAMS: JSON.stringify({ url: 'http://127.0.0.1:18080/RDP-SERVER/modules/bddp/home.html' })
+    PARAMS: JSON.stringify({ url: `${reportIP}/RDP-SERVER/modules/bddp/home.html` })
   }
 ]
 

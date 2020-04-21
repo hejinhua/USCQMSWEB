@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-11-26 15:44:48
- * @LastEditTime: 2020-04-14 15:28:48
+ * @LastEditTime: 2020-04-16 18:22:14
  * @Descripttion: 点击弹窗engine
  */
 import { connect } from 'dva'
@@ -12,6 +12,7 @@ import RelationPageHoc from './layout/RelationPageHoc'
 import PropertyHoc from './property/PropertyHoc'
 import PrintHoc from './relationPage/PrintHoc'
 import UpAndDownHoc from './layout/UpAndDownHoc'
+import ReportHoc from './layout/ReportHoc'
 
 export default function(engine) {
   const { namespace, clickButton, width } = engine
@@ -54,15 +55,8 @@ export default function(engine) {
       engine.isModal = true
       engine.width = '80%'
       engine.height = '500px'
-      let { reportId, isBddp } = JSON.parse(implclass || '{}')
-      OutComponent = () => (
-        <iframe
-          width='100%'
-          height='500px'
-          title={name}
-          src={`http://127.0.0.1:18080/RDP-SERVER/${isBddp ? 'bddpshow/show' : 'rdppage/main'}/${reportId}`}
-        />
-      )
+      implclass = JSON.parse(implclass || '{}')
+      OutComponent = ReportHoc({ ...implclass, title: name, height: '500px' })
       break
     default:
       engine.width = 400

@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-08-01 11:24:29
- * @LastEditTime: 2020-04-10 15:25:15
+ * @LastEditTime: 2020-04-16 18:25:20
  * @Descripttion: 点击按钮弹出窗口相关的请求
  */
 import * as commonService from '../../service/commonService'
@@ -19,7 +19,6 @@ const renderDiv = (name, Page) => {
     document.body.appendChild(div)
   }
   //渲染页面
-  console.log(window.g_app._store)
   ReactDOM.render(
     <Provider store={window.g_app._store}>
       <Page />
@@ -114,7 +113,7 @@ export default {
     },
     *loadPopup({ payload }, { call, put, select }) {
       let { clickButton, itemNo, namespace, record, engine, rData, condition } = payload
-      let { id, mno, wtype, values, implclass, propertyParam, reqparam } = clickButton
+      let { id, mno, wtype, values, implclass, propertyparam, reqparam } = clickButton
       reqparam = (reqparam && reqparam.split(';')) || []
       const visible = `modal-${id}`
       let newPayload = { clickButton, record, visible }
@@ -142,15 +141,23 @@ export default {
           case 'queryItemView':
             namespace = `${engine.namespace}_queryRelation`
             judgeModel(namespace)
+            const { itemNo: queryItemNO } = JSON.parse(propertyparam || '{}')
+            let { data: data2 } = yield call(commonService.post, '/sysModelToWbeClient/getModel/gridData', {
+              itemNo: queryItemNO || itemNo
+            })
             modalParams = { ...modalParams, ...engine, ...engine.modelRelationShip, namespace }
-            modalParams.itemGrid.rowSelectionType = reqparam.indexOf('hSingleData') !== -1 ? 'radio' : 'checkbox'
+            modalParams.itemGrid = {
+              ...modalParams.itemGrid,
+              rowSelectionType: reqparam.indexOf('hSingleData') !== -1 ? 'radio' : 'checkbox',
+              gridFieldList: data2.gridFieldList
+            }
             delete modalParams.pageMenus
             delete modalParams.modelRelationShip
             break
           case 'batchAdd':
-            if (propertyParam) {
-              propertyParam = JSON.parse(propertyParam)
-              const { itemNo: pItemNo, sql } = propertyParam
+            if (propertyparam) {
+              propertyparam = JSON.parse(propertyparam)
+              const { itemNo: pItemNo, sql } = propertyparam
               let { data: res } = yield call(commonService.common, {
                 itemNo: pItemNo,
                 condition: sql,
@@ -215,7 +222,13 @@ export default {
         }
       } else if (wtype === 'queryItemView') {
         engine.rData = rData
-        const params = { itemNo, rData, implClass: 'com.usc.app.query.QueryAddRelationObjectData', page: 1 }
+        const { itemNo: queryItemNO } = JSON.parse(propertyparam || '{}')
+        const params = {
+          itemNo: queryItemNO || itemNo,
+          rData: queryItemNO ? null : rData,
+          implClass: 'com.usc.app.query.QueryAddRelationObjectData',
+          page: 1
+        }
         let { data } = yield call(commonService.common, params)
         newPayload = {
           ...newPayload,

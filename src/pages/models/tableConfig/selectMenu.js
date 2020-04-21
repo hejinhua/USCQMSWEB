@@ -14,7 +14,6 @@ export default {
   //同步
   reducers: {
     packet(state, { payload }) {
-      console.log({ ...state, ...payload })
       return { ...state, ...payload }
     }
   },

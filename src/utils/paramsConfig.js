@@ -1,7 +1,7 @@
 /*
  * @Author: hjh
  * @Date: 2019-08-09 16:50:41
- * @LastEditTime: 2020-04-14 14:30:26
+ * @LastEditTime: 2020-04-16 09:48:09
  * @Descripttion: 参数集合
  */
 export const reqParamMap = [
@@ -113,3 +113,5 @@ export const relationTypeMap = [
 ]
 
 export const mqMtype = ['SQL脚本', '存储过程', '存储过程', 'JS脚本']
+
+export const reportIP = 'http://192.168.2.84:18080'

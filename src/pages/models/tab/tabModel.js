@@ -5,6 +5,7 @@ import Home from '../../components/base/Home'
 import routerConfigData from '../../routes/routerConfig/routerConfigData'
 import { ergodicRoot, judgeModel } from '../../../utils/utils'
 import { hideContextMenu } from '../../../utils/contextMenuFunc'
+import ReportHoc from '../../components/engine/layout/ReportHoc'
 const home = {
   title: 'Home',
   icon: 'home',
@@ -66,14 +67,7 @@ export default {
       const { panes } = state
       const isExists = panes.some(item => item.key === NO)
       if (!isExists) {
-        const Cmp = () => (
-          <iframe
-            width='100%'
-            height='100%'
-            title={NO}
-            src={url || `http://127.0.0.1:18080/RDP-SERVER/${isBddp ? 'bddpshow/show' : 'rdppage/main'}/${reportId}`}
-          />
-        )
+        let Cmp = ReportHoc({ title: NO, url, isBddp, reportId })
         panes.push({ title: NAME, icon: ICON, content: <Cmp />, key: NO, closable: true })
       }
       return { ...state, activeKey: NO, panes }

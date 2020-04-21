@@ -13,6 +13,7 @@ import IconSelectorForm from '../common/IconSelectorForm'
 import * as commonService from '../../service/commonService'
 
 import { reqParamMap, wtypeMap } from '../../../utils/paramsConfig'
+import ReportParams from './ReportParams'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -141,13 +142,6 @@ class TableSortForm extends Component {
                 </th>
               </tr>
               <tr>
-                {/* <th>
-                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='请求路径'>
-                    {getFieldDecorator('WEBPATH', {
-                      initialValue: WEBPATH
-                    })(<Input />)}
-                  </FormItem>
-                </th> */}
                 <th>
                   <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='弹窗类型'>
                     {getFieldDecorator('WTYPE', {
@@ -206,32 +200,35 @@ class TableSortForm extends Component {
                   </th>
                 </tr>
               ) : (
-                <tr>
-                  <th>
-                    <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='大屏报表'>
-                      {getFieldDecorator('isBddp', {
-                        initialValue: isBddp,
-                        valuePropName: 'checked'
-                      })(<Checkbox onChange={this.isBddpChange} />)}
-                    </FormItem>
-                  </th>
-                  <th>
-                    <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='报表'>
-                      {getFieldDecorator('reportId', {
-                        initialValue: reportId,
-                        rules: [{ required: true, message: '请选择!' }]
-                      })(
-                        <Select style={{ width: '100%' }}>
-                          {this.state.reportList.map(item => (
-                            <Option key={item.uuid} value={item.uuid}>
-                              {item.name}
-                            </Option>
-                          ))}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </th>
-                </tr>
+                <>
+                  <tr>
+                    <th>
+                      <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='大屏报表'>
+                        {getFieldDecorator('isBddp', {
+                          initialValue: isBddp,
+                          valuePropName: 'checked'
+                        })(<Checkbox onChange={this.isBddpChange} />)}
+                      </FormItem>
+                    </th>
+                    <th>
+                      <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='报表'>
+                        {getFieldDecorator('reportId', {
+                          initialValue: reportId,
+                          rules: [{ required: true, message: '请选择!' }]
+                        })(
+                          <Select style={{ width: '100%' }}>
+                            {this.state.reportList.map(item => (
+                              <Option key={item.uuid} value={item.uuid}>
+                                {item.name}
+                              </Option>
+                            ))}
+                          </Select>
+                        )}
+                      </FormItem>
+                    </th>
+                  </tr>
+                  <ReportParams IMPLCLASS={IMPLCLASS} />
+                </>
               )}
             </tbody>
           </table>

@@ -14,6 +14,8 @@ import * as commonService from '../../service/commonService'
 import PropertyParamForm from './PropertyParamForm'
 import ItemSelectorCmp from './ItemSelectorCmp'
 import DragModal from '../common/DragModal'
+import ReportParams from './ReportParams'
+import AddMapParams from './AddMapParams'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -45,8 +47,30 @@ class WorkMenuForm extends Component {
     WTYPE: '',
     visible: false,
     visible2: false,
-    IMPLTYPE: false
+    IMPLTYPE: false,
+    reportList: []
   }
+  componentDidMount() {
+    const { record } = this.props
+    const { WTYPE, ICON, IMPLTYPE, IMPLCLASS, ITEMNO } = record
+    this.setState({ ICON, WTYPE, IMPLTYPE, ITEMNO })
+    this.getMnoList(WTYPE)
+    if (WTYPE === 'report') {
+      this.setState({ wType: WTYPE })
+      let { isBddp } = JSON.parse(IMPLCLASS || '{}')
+      this.isBddpChange({ target: { checked: isBddp ? true : false } })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.record !== this.props.record) {
+      const { record } = this.props
+      const { WTYPE, ICON } = record
+      this.setState({ ICON, WTYPE })
+      this.getMnoList(WTYPE)
+    }
+  }
+
   toogleModal = () => {
     let { WTYPE, MNO, ITEMNO } = this.props.record
     WTYPE = this.state.WTYPE || WTYPE
@@ -62,6 +86,8 @@ class WorkMenuForm extends Component {
         this.setState({ fieldList: res.data })
         this.setState({ visible2: !this.state.visible2 })
       })
+    } else if (WTYPE === 'queryItemView') {
+      this.setState({ visible3: !this.state.visible3 })
     }
   }
   toogleModal2 = () => {
@@ -80,11 +106,20 @@ class WorkMenuForm extends Component {
       onMenusOk(values)
       return
     }
+    if (this.reportForm) {
+      this.reportForm.props.form.validateFields((err, values) => {
+        if (err) {
+          return message.error('保存失败')
+        } else {
+          this.reportForm.Ok()
+        }
+      })
+    }
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
         callback()
         const { PID, record, dispatch, toogleModal, namespace, activeKey, onMenusOk } = this.props
-        const { REQPARAM } = values
+        const { REQPARAM, reportId, isBddp } = values
         if (REQPARAM) {
           values.REQPARAM = REQPARAM.join(';')
         }
@@ -93,36 +128,21 @@ class WorkMenuForm extends Component {
           onMenusOk(values)
           return
         }
+        if (this.state.WTYPE === 'report') {
+          values.IMPLCLASS = JSON.stringify({ reportId, isBddp, ...this.reportParams })
+          delete values.reportId
+          delete values.isBddp
+        }
         //保存和更新数据
         await dispatch({ type: 'tableConfig/addOrEditItem', payload: { values, PID, record, activeKey: '2' } })
         callback()
         toogleModal()
-        dispatch({
-          type: `${namespace}/getRelationMenu`,
-          payload: { PID, activeKey }
-        })
+        dispatch({ type: `${namespace}/getRelationMenu`, payload: { PID, activeKey } })
       } else {
         return message.error('保存失败')
       }
     })
   }
-
-  componentDidMount() {
-    const { record } = this.props
-    const { WTYPE, ICON, IMPLTYPE } = record
-    this.setState({ ICON, WTYPE, IMPLTYPE })
-    this.getMnoList(WTYPE)
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.record !== this.props.record) {
-      const { record } = this.props
-      const { WTYPE, ICON } = record
-      this.setState({ ICON, WTYPE })
-      this.getMnoList(WTYPE)
-    }
-  }
-
   getMnoList = (WTYPE, itemNo) => {
     let tableName = ''
     let { ITEMNO, classItemNo } = this.props
@@ -195,6 +215,13 @@ class WorkMenuForm extends Component {
     this.setState({ MNO: value })
     this.props.form.setFieldsValue({ TITLE: option.key })
   }
+  onWTypeChange = value => {
+    this.setState({ WTYPE: value })
+    if (value === 'report') {
+      let { isBddp } = this.props.form.getFieldsValue()
+      this.isBddpChange({ target: { checked: isBddp ? true : false } })
+    }
+  }
 
   childAction = () => {
     this.childForm.props.form.validateFields((err, values) => {
@@ -214,6 +241,20 @@ class WorkMenuForm extends Component {
   }
   onIMPLTYPEChange = e => {
     this.setState({ IMPLTYPE: e.target.checked })
+  }
+  reportAction = values => {
+    this.reportParams = values
+  }
+
+  isBddpChange = e => {
+    this.props.form.resetFields(['reportId'])
+    commonService.post('/src/getReportFiles', { isBddp: e.target.checked }).then(res => {
+      let { dataList } = res.data
+      if (e.target.checked) {
+        dataList = dataList.map(item => ({ name: item.bdname, uuid: item.name }))
+      }
+      this.setState({ reportList: dataList })
+    })
   }
 
   render() {
@@ -237,17 +278,21 @@ class WorkMenuForm extends Component {
       IMPLTYPE,
       ENNAME
     } = this.props.record
-    const { ICON, visible, visible2, fieldList } = this.state
+    const { ICON, visible, visible2, fieldList, visible3 } = this.state
     const { propertyList, relationList } = this.props.tableConfig
-    if (!WTYPE) {
-      WTYPE = this.state.WTYPE
-    }
     let mnoList = this.state.mnoList
     if (!mnoList) mnoList = WTYPE === 'itemRelationPage' ? relationList : propertyList
     if (REQPARAM) {
       REQPARAM = REQPARAM.split(';')
     }
     const isABAction = MTYPE === 1 && ABTYPE
+    let isBddp
+    let reportId
+    if (WTYPE === 'report') {
+      IMPLCLASS = JSON.parse(IMPLCLASS)
+      isBddp = IMPLCLASS.isBddp
+      reportId = IMPLCLASS.reportId
+    }
     const onRules = (rule, value, callback) => {
       let list = this.props.list || []
       if (ID) {
@@ -347,7 +392,7 @@ class WorkMenuForm extends Component {
                 {getFieldDecorator('WTYPE', {
                   initialValue: WTYPE
                 })(
-                  <Select disabled style={{ width: '100%' }}>
+                  <Select onChange={this.onWTypeChange} style={{ width: '100%' }}>
                     {wtypeMap.map((item, index) => (
                       <Option value={item.value} key={index}>
                         {item.name}
@@ -364,7 +409,7 @@ class WorkMenuForm extends Component {
                 })(<IconSelectorForm onOk={this.setIconName} icon={ICON} />)}
               </FormItem>
             </div>
-            {WTYPE && (
+            {WTYPE && WTYPE !== 'report' && (
               <div style={{ width: '50%' }}>
                 <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='对象标识'>
                   {getFieldDecorator('ITEMNO', {
@@ -403,52 +448,90 @@ class WorkMenuForm extends Component {
                 })(<Input />)}
               </FormItem>
             </div>
-            <div style={{ width: '50%' }}>
-              <FormItem
-                onChange={this.onIMPLTYPEChange}
-                {...formItemLayout}
-                style={{ marginBottom: 0 }}
-                label='信息总线'
-              >
-                {getFieldDecorator('IMPLTYPE', {
-                  initialValue: IMPLTYPE,
-                  valuePropName: 'checked'
-                })(<Checkbox />)}
-              </FormItem>
-            </div>
-            {MTYPE !== 1 && (
-              <div style={{ width: '100%' }}>
-                <FormItem
-                  {...formItemLayout2}
-                  style={{ marginBottom: 0 }}
-                  label={this.state.IMPLTYPE ? '信息总线' : '实现类'}
-                >
-                  {getFieldDecorator('IMPLCLASS', {
-                    rules: [{ required: true, message: '此项必填!' }],
-                    initialValue: IMPLCLASS
-                  })(<Input disabled addonAfter={<Icon type='plus' onClick={this.showWorkMenu} />} />)}
-                </FormItem>
-              </div>
+            {this.state.WTYPE !== 'report' ? (
+              <>
+                <div style={{ width: '50%' }}>
+                  <FormItem
+                    onChange={this.onIMPLTYPEChange}
+                    {...formItemLayout}
+                    style={{ marginBottom: 0 }}
+                    label='信息总线'
+                  >
+                    {getFieldDecorator('IMPLTYPE', {
+                      initialValue: IMPLTYPE,
+                      valuePropName: 'checked'
+                    })(<Checkbox />)}
+                  </FormItem>
+                </div>
+                {MTYPE !== 1 && (
+                  <div style={{ width: '100%' }}>
+                    <FormItem
+                      {...formItemLayout2}
+                      style={{ marginBottom: 0 }}
+                      label={this.state.IMPLTYPE ? '信息总线' : '实现类'}
+                    >
+                      {getFieldDecorator('IMPLCLASS', {
+                        rules: [{ required: true, message: '此项必填!' }],
+                        initialValue: IMPLCLASS
+                      })(<Input disabled addonAfter={<Icon type='plus' onClick={this.showWorkMenu} />} />)}
+                    </FormItem>
+                  </div>
+                )}
+                {(WTYPE === 'itemPropertyPage' ||
+                  WTYPE === 'batchAdd' ||
+                  this.state.WTYPE === 'itemPropertyPage' ||
+                  this.state.WTYPE === 'batchAdd' ||
+                  this.state.WTYPE === 'queryItemView') && (
+                  <div style={{ width: '100%' }}>
+                    <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='属性页参数'>
+                      {getFieldDecorator('PROPERTYPARAM', {
+                        initialValue: PROPERTYPARAM
+                      })(<Input disabled addonAfter={<Icon type='plus' onClick={this.toogleModal} />} />)}
+                    </FormItem>
+                  </div>
+                )}
+                <div style={{ width: '100%', marginTop: '10px' }}>
+                  <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='请求参数'>
+                    {getFieldDecorator('REQPARAM', {
+                      initialValue: REQPARAM
+                    })(<Checkbox.Group disabled options={reqParamMap} />)}
+                  </FormItem>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ width: '50%' }}>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='大屏报表'>
+                    {getFieldDecorator('isBddp', {
+                      initialValue: isBddp,
+                      valuePropName: 'checked'
+                    })(<Checkbox onChange={this.isBddpChange} />)}
+                  </FormItem>
+                </div>
+                <div style={{ width: '50%' }}>
+                  <FormItem {...formItemLayout} style={{ marginBottom: 0 }} label='报表'>
+                    {getFieldDecorator('reportId', {
+                      initialValue: reportId,
+                      rules: [{ required: true, message: '请选择!' }]
+                    })(
+                      <Select style={{ width: '100%' }}>
+                        {this.state.reportList.map(item => (
+                          <Option key={item.uuid} value={item.uuid}>
+                            {item.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
+                  </FormItem>
+                </div>
+                <ReportParams
+                  IMPLCLASS={IMPLCLASS}
+                  ITEMNO={ITEMNO || this.props.ITEMNO || this.props.classItemNo}
+                  Action={this.reportAction}
+                  wrappedComponentRef={form => (this.reportForm = form)}
+                />
+              </>
             )}
-            {(WTYPE === 'itemPropertyPage' ||
-              WTYPE === 'batchAdd' ||
-              this.state.WTYPE === 'itemPropertyPage' ||
-              this.state.WTYPE === 'batchAdd') && (
-              <div style={{ width: '100%' }}>
-                <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='属性页参数'>
-                  {getFieldDecorator('PROPERTYPARAM', {
-                    initialValue: PROPERTYPARAM
-                  })(<Input disabled addonAfter={<Icon type='plus' onClick={this.toogleModal} />} />)}
-                </FormItem>
-              </div>
-            )}
-            <div style={{ width: '100%', marginTop: '10px' }}>
-              <FormItem {...formItemLayout2} style={{ marginBottom: 0 }} label='请求参数'>
-                {getFieldDecorator('REQPARAM', {
-                  initialValue: REQPARAM
-                })(<Checkbox.Group disabled options={reqParamMap} />)}
-              </FormItem>
-            </div>
           </div>
         </Form>
         <SelectMenu />
@@ -456,7 +539,7 @@ class WorkMenuForm extends Component {
         <SelectItemNo />
         {(MNO || this.state.MNO) && (
           <PropertyParamForm
-            pItemNo={this.props.ITEMNO || this.props.classItemNo}
+            pItemNo={this.state.ITEMNO || this.props.ITEMNO || this.props.classItemNo}
             ITEMNO={ITEMNO || this.props.ITEMNO || this.props.classItemNo || this.state.ITEMNO}
             ITEMA={this.props.ITEMA}
             MNO={MNO || this.state.MNO}
@@ -474,6 +557,16 @@ class WorkMenuForm extends Component {
               fieldList={fieldList}
             />
           </DragModal>
+        )}
+        {this.state.WTYPE === 'queryItemView' && (
+          <AddMapParams
+            PROPERTYPARAM={PROPERTYPARAM}
+            ITEMNO={ITEMNO || this.state.ITEMNO || this.props.ITEMNO || this.props.classItemNo}
+            visible={visible3}
+            toogleModal={this.toogleModal}
+            dispatch={this.props.dispatch}
+            Action={this.Action}
+          />
         )}
       </div>
     )

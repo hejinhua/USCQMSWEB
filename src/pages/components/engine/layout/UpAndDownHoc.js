@@ -14,7 +14,6 @@ const TabPane = Tabs.TabPane
  * @date 2019-05-08
  */
 const UpAndDownHoc = engine => WrappedComponent => {
-  console.log(engine)
   return class extends Component {
     onClick(record) {
       if (!engine.itemRelationPage || engine.itemRelationPage.length === 0) {

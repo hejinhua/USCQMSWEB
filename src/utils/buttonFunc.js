@@ -4,7 +4,7 @@ export const clickBtn = (item, engine, model) => {
   // console.log(engine)
   let { selectedRows = [], pRecord, dataList, params } = model
   let { itemNo, namespace, relevanceNo, itemGrid, modelRelationShip, itemA, classNamespace } = engine
-  let { reqparam, wtype, param, implclass, mno, id, propertyParam } = item
+  let { reqparam, wtype, param, implclass, mno, id, propertyparam } = item
   if (item.itemNo) itemNo = item.itemNo
   const { classNodeItemNo, classItemNo } = params || {}
   reqparam = (reqparam && reqparam.split(';')) || []
@@ -53,9 +53,9 @@ export const clickBtn = (item, engine, model) => {
       })
       return
     } else {
-      if (propertyParam) {
-        propertyParam = JSON.parse(propertyParam)
-        const { itemNo: pItemNo, mapFields, selectMap, selectDefaultV, defaultVList } = propertyParam
+      if (propertyparam) {
+        propertyparam = JSON.parse(propertyparam)
+        const { itemNo: pItemNo, mapFields, selectMap, selectDefaultV, defaultVList } = propertyparam
         let mapRecord = {}
         let sRecord = pItemNo === itemA ? pRecord : selectedRows[0]
         if (selectDefaultV) {
@@ -86,9 +86,9 @@ export const clickBtn = (item, engine, model) => {
   } else if (wtype === 'classItemView') {
     return
   } else if (wtype === 'batchAdd') {
-    if (propertyParam) {
-      propertyParam = JSON.parse(propertyParam)
-      const { mapFields } = propertyParam
+    if (propertyparam) {
+      propertyparam = JSON.parse(propertyparam)
+      const { mapFields } = propertyparam
       item.values.mapFields = mapFields
     }
   } else if (wtype === 'downLoad') {
